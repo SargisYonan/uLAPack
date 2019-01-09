@@ -1,0 +1,82 @@
+# μLAPack
+Micro Linear Algebra Package
+
+Pronounced: mu la pack
+
+A small linear algebra package to compute various matrix/vector operations.
+The library is optimized to work on microcontrollers and embedded environments, but can be used anywhere C can be compiled.
+
+## Features
+All μLAPack functions are "safe" in that the matrix/vector operations are checked for initialization and mathematic dimensional legality before an operation takes place.
+
+### Options
+Compile time options can be set in either the file `ulapack_options.h` or in a build/make system. The user of μLAPack can make the following considerations while using the library.
+
+#### Static Memory Allocation
+The user of this library has the option of only using static memory allocation. This option is most suitable in embedded environments that can not dynamically allocate memory because of safety concerns with calls to alloc and because of time critical requirements. The macro `ULAPACK_USE_STATIC_ALLOC` must be `#define`d at compile time in order to use the static memory allocation feature. The static allocation technique relies on using overhead memory in the static matrix memory allocation. Due to this technique, the maximum possible row and column dimensions of any matrix object must be explicitly defined at compile time via the macros: `ULAPACK_MAX_MATRIX_N_ROWS` and `ULAPACK_MAX_MATRIX_N_COLS`. Any matrix initialized after compile time can not exceed the dimensions defined by the macros, and an error will be returned upon initialization if this is attempted.
+
+#### Dynamic Memory Allocation
+Unless `ULAPACK_USE_STATIC_ALLOC` is define, the library relies on using dynamic memory allocation by default.
+
+#### Choose Your Entry Container Type
+The user of this library has the option of setting the matrix/vector element data type to a desired type via the `ULAPACK_MATRIX_ENTRY_TYPE` `#define`. It is recommended that a primitive floating point type is used. `ULAPACK_MATRIX_ENTRY_TYPE` is set to `double` by default, and is `typedef`ed to `ulapack_entry_t` in the source code.
+
+#### Clear Upon Initialization
+All new matrix/vector objects made can be initialized to zeros if `ULAPACK_INITIALIZE_MEMORY` is defined at compile time.
+
+#### Allocator/Freer Options
+If dynamic memory allocation is used, the memory allocator and freer can be configured via the macros `ULAPACK_ALLOC` and `ULAPACK_FREE`.
+
+### Included Functionality
+* element editing - `ulapack_edit_entry`
+* element getting - `ulapack_get_entry`
+* get matrix/vector size - `ulapack_size`
+* set matrix/vector to one value - `ulapack_set`
+* check for matrix/vector equality - `ulapack_is_equal`
+* set a square matrix to the identity - `ulapack_eye` 
+* sum the elements of a matrix/vector - `ulapack_sum`
+* add two matrices/vectors - `ulapack_add`
+* subtract two matrices/vectors - `ulapack_subtract`
+* scale a matrix/vector by a scalar - `ulapack_scale`
+* take the norm of a vector of Frobenius norm of a matrix - `ulapack_norm`
+* take the product of two matrices/vectors - `ulapack_product`
+* take the transpose of a matrix/vector - `ulapack_transpose`
+* copy the contents of a matrix/vector - `ulapack_copy`
+
+### Unit Tests
+μLAPack was developed using test-driven practices. The unit tests and `Makefile` for building and running the unit tests are in the `test/` directory.
+
+### Error Codes
+The following error codes can be returned from the library functions. See the in-file documentation for the function to check its return codes.
+
+* `ulapack_error` -  general error code
+* `ulapack_oom` - out of memory error code
+* `ulapack_invalid_argument` - bad argument given to function
+* `ulapack_uninit_obj` - uninitialized object passed into function
+* `ulapack_success` - general success code
+
+# Requirements
+The clib math.h library is required for a square root operation in the `ulapack_norm` function.
+
+# Licensing & Support
+μLAPack and any derivative works of μLAPack (and embedded_lapack) are free to use for personal and/or educational use without profit and for development purposes in your project(s) to verify if μLAPack is right for you. Contact Sargis Yonan at sargis@yonan.org with the subject line `uLAPack Licensing` to further discuss licensing for your project/product. For support, file a GitHub issue within this repository.
+
+# Legacy
+μLAPack is a fork of my now deprecated [embedded_lapack](https://www.github.com/SargisYonan/embedded_lapack) library. This version includes definitions for both static and dynamic memory allocation, safer type definitions, more explicit and safer error code status, Doxygen, and more compiler support.
+
+# TODO
+* Write use cases for both static and dynamic allocation of various architectures
+* find occurrences and indices of a value in a matrix/vector - `ulapack_find`
+* Lower-Upper (LU) decomposition of a matrix - `ulapack_LU`
+* Singular Value Decomposition (SVD) of a matrix - `ulapack_SVD`
+* take the inverse of a matrix via LU decomposition - `ulapack_inverse`
+* take the pseudo inverse of a matrix via SVD (good for poorly conditioned matrix inversions) - `ulapack_pinverse`
+* grab a sub-matrix from a matrix/vector (similar to the `:` operator in MATLAB) - `ulapack_copy_submatrix`
+* compute the least squares of a matrix/system - `ulapack_least_squares`
+* fit a polynomial using least squares and get the polynomial coefficients - `ulapack_polyfit`
+* take the inner product of two vectors - `ulapack_dot`
+* take the cross produce of two vector - `ulapack_cross`
+* make a skew symmetric matrix - `ulapack_skew`
+* take the trace of a matrix - `ulapack_trace`
+
+Have a suggestion for a new feature/function? File an issue in this repository with your requests.

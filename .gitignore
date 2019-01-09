@@ -1,0 +1,6 @@
+# MacOS Ignore
+*.DS_Store
+
+# C
+*.o
+
