@@ -1,1 +1,17 @@
-μLAPack and any derivative works of μLAPack (and embedded_lapack) are free to use for personal and/or educational use without profit and for development purposes in your project(s) to verify if μLAPack is right for you. Contact Sargis Yonan at sargis@yonan.org with the subject line `uLAPack Licensing` to further discuss licensing and compensation for your project/product.
+μLAPack License
+Copyright (c) 2019 Sargis S Yonan
+
+μLAPack and any derivative works of μLAPack (and embedded_lapack) are free only 
+for use in personal/private non-commercial and not-for-profit projects and/or educational use where the source code is used for non-commercial academic 
+research with out profit.
+
+μLAPack and any derivative works may be used for development purposes in your for-profit and/or commercial project(s) to verify if μLAPack is right for you.
+
+If you and/or your party find that μLAPack is right for you and/or your project,
+and the source code for μLAPack, and its derivative works, are used in any
+capacity in your product and/or project contact Sargis Yonan at sargis@yonan.org with subject line: `uLAPack Licensing`. In the body of the message include a
+general description of the product and/or project, how and where μLAPack is used,
+estimated runtime/units sold of the product, estimated cost of each unit, and in
+what capacity μLAPack helped achieve completion of the project/product. Based on
+the information given, I will generate a quote and custom license for your use
+case.
