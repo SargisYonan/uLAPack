@@ -55,6 +55,67 @@ The following error codes can be returned from the library functions. See the in
 * `ulapack_uninit_obj` - uninitialized object passed into function
 * `ulapack_success` - general success code
 
+# Usage
+
+## Include The Library
+```C
+#include "ulapack.h"
+
+```
+
+## Statically Allocated Matrix
+An example of setting up and using μLAPack with static memory allocation turned on.
+
+File: `ulapack_options.h`
+```C
+#define ULAPACK_USE_STATIC_ALLOC // switch on static allocation
+#define ULAPACK_MAX_MATRIX_N_ROWS (10u) // set maximum matrix rows possible to 10
+#define ULAPACK_MAX_MATRIX_N_COLS (10u) // set maximum matrix cols possible to 10
+
+```
+File: `another_c_file.c`
+```C
+#include "ulapack.h"
+
+...
+
+ulapack_matrix_t A; // declare a matrix object with name A
+ulapack_initialize_matrix(&A, 3u, 3u); // initialize the matrix with size 3X3
+ulapack_eye(&A); // set the matrix A equal to the 3X3 identity matrix
+ulapack_scale(&A, 3, &A); // scale the matrix A by 3
+
+```
+
+The result is:
+``` 
+    [ 3  0  0 ]
+A = [ 0  3  0 ]
+    [ 0  0  3 ]
+```
+
+## Dynamically Allocated Matrix
+An example of setting up and using μLAPack with static memory allocation turned on.
+
+File: `a_c_file.c`
+```C
+#include "ulapack.h"
+
+...
+
+ulapack_matrix_t *A; // declare a matrix object pointer with name A
+ulapack_initialize_matrix(&A, 3u, 3u); // initialize the matrix with size 3X3
+ulapack_eye(A); // set the matrix A equal to the 3X3 identity matrix
+ulapack_scale(A, 3, A); // scale the matrix A by 3
+
+```
+
+The result is:
+``` 
+    [ 3  0  0 ]
+A = [ 0  3  0 ]
+    [ 0  0  3 ]
+```
+
 # Requirements
 The clib math.h library is required for a square root operation in the `ulapack_norm` function.
 
