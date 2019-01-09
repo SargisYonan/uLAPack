@@ -38,7 +38,7 @@ If dynamic memory allocation is used, the memory allocator and freer can be conf
 * add two matrices/vectors - `ulapack_add`
 * subtract two matrices/vectors - `ulapack_subtract`
 * scale a matrix/vector by a scalar - `ulapack_scale`
-* take the norm of a vector of Frobenius norm of a matrix - `ulapack_norm`
+* take the norm of a vector or Frobenius norm of a matrix - `ulapack_norm`
 * take the product of two matrices/vectors - `ulapack_product`
 * take the transpose of a matrix/vector - `ulapack_transpose`
 * copy the contents of a matrix/vector - `ulapack_copy`
