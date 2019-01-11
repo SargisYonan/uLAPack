@@ -29,9 +29,7 @@ TERMS AND CONDITIONS FOR USE, REPRODUCTION, AND DISTRIBUTION
       calibration, and state estimation.
 
       "Work" shall mean the work of authorship, whether in Source or
-      Object form, made available under the License, as indicated by a
-      copyright notice that is included in or attached to the work
-      (an example is provided in the Appendix below). The Definition
+      Object form, made available under the License. The Definition
       of Work will be used interchangeably with μLAPack in this License.
 
       "Derivative Works" shall mean any work, whether in Source or Object
@@ -46,14 +44,15 @@ TERMS AND CONDITIONS FOR USE, REPRODUCTION, AND DISTRIBUTION
       the original version of the Work and any modifications or additions
       to that Work or Derivative Works thereof, that is intentionally
       submitted to Licensor for inclusion in the Work by the copyright owner
-      or by an individual or Legal Entity authorized to submit on behalf of
-      the copyright owner. For the purposes of this definition, "submitted"
-      means any form of electronic, verbal, or written communication sent
-      to the Licensor or its representatives, including but not limited to
-      communication on electronic mailing lists, source code control systems,
-      and issue tracking systems that are managed by, or on behalf of, the
-      Licensor for the purpose of discussing and improving the Work if and only
-      if the copyright owner designates in writing "This is a Contribution."
+      or by an individual authorized to submit on behalf of the copyright 
+      owner. For the purposes of this definition, "submitted" means any form 
+      of electronic, verbal, or written communication sent to the Licensor 
+      or its representatives, including but not limited to communication on 
+      electronic mailing lists, source code control systems, and issue 
+      tracking systems that are managed by, or on behalf of, the Licensor 
+      for the purpose of discussing and improving the Work if and only if 
+      the copyright owner designates in writing "This is a Contribution to
+      the Work."
 
       "Contributor" shall mean Licensor, copywriter owner and any individual, 
       or Legal Entity on behalf of whom a Contribution has been received by 
@@ -64,20 +63,17 @@ TERMS AND CONDITIONS FOR USE, REPRODUCTION, AND DISTRIBUTION
       "Personal Use" shall mean the use of this Work for non-profitable
       means, exercises, and personal education. Personal/Private Use will 
       explicitly exclude the use of this Work for any commercial, corporate,
-      for-cost, and for-profit purpose. Furthermore, this License shall be
-      attached, verbatim, and used for any Derivative Works published publicly,
-      including but not limited to publishing anywhere on the world wide web 
-      or the Internet.
+      for-cost, and for-profit purpose, or the intentions to do so.
       
       "Private Use" will be defined identically to the definition for Personal 
       Use.
 
       "Free" shall refer to the absence of monetary compensation for the Work.
       
-      "Developer" an individual who uses this Work, Source or Object form Work 
-      with the intention of making a commercially available product in any 
-      medium, with or without modifications, to this Work and/or Derivative 
-      Work.
+      "Developer" an individual who uses this Work or Source with the 
+      intention of making a commercially available product in any medium, with
+      or without modifications, to this Work and/or Derivative 
+      Work they create or help create.
 
   2.  Grant of Copyright License. 
       Sargis S Yonan is the copyright holder, and the Licensor of this Work. The 
@@ -95,28 +91,12 @@ TERMS AND CONDITIONS FOR USE, REPRODUCTION, AND DISTRIBUTION
           were. A copy of this License must be attached to the source code
           if the source code is redistributed; and
 
-      (b) You must not redistribute the Work, modified Work, or Source form 
-          with the intention of relicensing the Source and Work under a
-          different License; and
+      (b) You must not redistribute the direct Work or Source form with 
+          a different License agreement. This License must be included in 
+          the code base of any redistribution unless otherwise specified in
+          a written agreement between You and the Licensor; and
 
-      (c) If the Work includes a "NOTICE" text file as part of its
-          distribution, then any Derivative Works that You distribute must
-          include a readable copy of the attribution notices contained
-          within such NOTICE file, excluding those notices that do not
-          pertain to any part of the Derivative Works, in at least one
-          of the following places: within a NOTICE text file distributed
-          as part of the Derivative Works; within the Source form or
-          documentation, if provided along with the Derivative Works; or,
-          within a display generated by the Derivative Works, if and
-          wherever such third-party notices normally appear. The contents
-          of the NOTICE file are for informational purposes only and
-          do not modify the License. You may add Your own attribution
-          notices within Derivative Works that You distribute, alongside
-          or as an addendum to the NOTICE text from the Work, provided
-          that such additional attribution notices cannot be construed
-          as modifying the License; and
-
-      (d) Subject to the terms and conditions of this License, the Licensor, can 
+      (c) Subject to the terms and conditions of this License, the Licensor, can 
           grant to You redistribution right if and only if a signed agreement 
           (contract) between You and the Licensor, including at least, but not 
           limited to the following terms and conditions:
@@ -153,12 +133,11 @@ TERMS AND CONDITIONS FOR USE, REPRODUCTION, AND DISTRIBUTION
                    agreement conditions:
 
                    (i)  A single payment, agreed upon by both You and the 
-                        Licensor, paid to the Licensor within one day (24 hours) 
-                        upon this granting agreement. The payment could also be 
-                        paid over the course of of 3 months (120 days) with no 
-                        more than four installation over the course, where each 
-                        installation includes at least the total agreed upon 
-                        payment in USD divided by five (5); and/or
+                        Licensor, paid to the Licensor within 3 months 
+                        (120 days) with no more than four installations of
+                        payment over the course, where each installation 
+                        includes at least the total agreed upon payment in 
+                        USD divided by five (5); and/or
 
                    (ii) An agreed upon royalty fee, where the Licensor will be
                         compensated per instance of Works and/or Derivative 
@@ -209,15 +188,21 @@ TERMS AND CONDITIONS FOR USE, REPRODUCTION, AND DISTRIBUTION
   6.  Free License.
       Subject to the terms and conditions of this License, a Free License is
       granted to an individual using this Work for the creation of Object forms
-      and Derivative Works for Personal and Private Use. Under no circumstances
-      may a corporation, company, academic institution, an individual developing 
-      a product, or an affiliate with the intention of redistributing on behalf 
-      of a corporation, company, academic institution use the Free License. A 
+      and Derivative Works for Personal and Private Use. A Developer may use the
+      Free License within a 24 hour grace period before deciding to purchase a 
+      Developer License. Besides the grace period, under no circumstances may a
+      corporation, company, academic institution, an individual developing a
+      product, or an affiliate with the intention of redistributing on behalf of
+      a corporation, company, academic institution use the Free License. A 
       Developer License must be granted for such cases. The Free License will 
       only grant the use of this Work for academic purposes, including but not
       limited to research and publication (only by citing the creator of the 
       Source), and self-learning purposes. The Free License is not allowed for 
       any product development purposes.
+      
+      This License shall be included via text, or linked to, anytime the Work 
+      or Derivitive Work is published publicly, including but not limited to 
+      publishing on the world wide web.
 
   7.  Submission of Contributions. 
       Subject to the terms and conditions of this License, a Contributor may
@@ -227,7 +212,6 @@ TERMS AND CONDITIONS FOR USE, REPRODUCTION, AND DISTRIBUTION
       this Work. A Contributor will not be granted the Copyright License, unless
       explicitly defined in a mutually signed agreement (contract) between both
       the Licensor and Contributor.
-
 
   8.  Trademarks. 
       This License does not grant permission to use the trade names, trademarks, 
