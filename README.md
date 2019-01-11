@@ -28,6 +28,8 @@ All new matrix/vector objects made can be initialized to zeros if `ULAPACK_INITI
 If dynamic memory allocation is used, the memory allocator and freer can be configured via the macros `ULAPACK_ALLOC` and `ULAPACK_FREE`.
 
 ### Included Functionality
+* Initialize a matrix/vector object - `ulapack_initialize`
+* Print a matrix/vector to an output file stream - `ulapack_print`
 * element editing - `ulapack_edit_entry`
 * element getting - `ulapack_get_entry`
 * get matrix/vector size - `ulapack_size`
