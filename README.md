@@ -120,7 +120,7 @@ A = [ 0  3  0 ]
 The clib math.h library is required for a square root operation in the `ulapack_norm` function.
 
 # Licensing & Support
-μLAPack and any derivative works of μLAPack (and embedded_lapack) are free to use for personal and/or educational use without profit and for development purposes in your project(s) to verify if μLAPack is right for you. Contact Sargis Yonan at sargis@yonan.org with the subject line `uLAPack Licensing` to further discuss licensing for your project/product. For support, file a GitHub issue within this repository.
+μLAPack and any derivative works of μLAPack (and embedded_lapack) are free to use for personal and/or educational use without profit and for development purposes in your project(s) to verify if μLAPack is right for you. Contact Sargis Yonan at sargis@yonan.org with the subject line `uLAPack Licensing` to further discuss developer licensing for your project/product, and redistribution. Refer to the [LICENSE](LICENSE) document for licensing details.
 
 # Legacy
 μLAPack is a fork of my now deprecated [embedded_lapack](https://www.github.com/SargisYonan/embedded_lapack) library. This version includes definitions for both static and dynamic memory allocation, safer type definitions, more explicit and safer error code status, Doxygen, and more compiler support.
@@ -130,6 +130,7 @@ The clib math.h library is required for a square root operation in the `ulapack_
 * find occurrences and indices of a value in a matrix/vector - `ulapack_find`
 * Lower-Upper (LU) decomposition of a matrix - `ulapack_LU`
 * Singular Value Decomposition (SVD) of a matrix - `ulapack_SVD`
+* Matrix determinent - `ulapack_det`
 * take the inverse of a matrix via LU decomposition - `ulapack_inverse`
 * take the pseudo inverse of a matrix via SVD (good for poorly conditioned matrix inversions) - `ulapack_pinverse`
 * grab a sub-matrix from a matrix/vector (similar to the `:` operator in MATLAB) - `ulapack_copy_submatrix`
