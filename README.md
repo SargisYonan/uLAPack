@@ -142,7 +142,7 @@ Output:
 ```
 
 # Requirements
-The clib math.h library is required for a square root operation in the `ulapack_norm` function.
+The libc math.h library is required for a square root operation in the `ulapack_norm` function. To avoid the use of additional cmath library calls, the `math.h` `pow()` function was rewritten as a private function.
 
 # Licensing & Support
 μLAPack and any derivative works of μLAPack (and embedded_lapack) are free to use for personal and/or educational use without profit and for development purposes in your project(s) to verify if μLAPack is right for you. Contact Sargis Yonan at sargis@yonan.org with the subject line `uLAPack Licensing` to further discuss developer licensing for your project/product, and redistribution. Refer to the [LICENSE](LICENSE) document for licensing details.
@@ -156,6 +156,7 @@ The clib math.h library is required for a square root operation in the `ulapack_
 * take the pseudo inverse of a matrix via SVD (good for poorly conditioned matrix inversions)
 * grab a sub-matrix from a matrix/vector (similar to the `:` operator in MATLAB) - `ulapack_copy_submatrix`
 * take the cross produce of two vector - `ulapack_cross`
+* write an element square root function to replace libc call
 * make a skew symmetric matrix - `ulapack_skew`
 * copy array into vector - `ulapack_array_copy`
 * make a Kalman extension package `μKalman` with:
