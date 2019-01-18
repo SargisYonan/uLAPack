@@ -50,8 +50,7 @@ If dynamic memory allocation is used, the memory allocator and freer can be conf
 * take the trace of a matrix - `ulapack_trace`
 * query an object to see if it is a vector - `ulapack_is_vector`
 * take the inner product of two vectors - `ulapack_dot`
-* make upper triangular matrix form - `ulapack_upper`
-* make lower triangular matrix form - `ulapack_lower`
+* decompose a matrix into LU triangular matrices - `ulapack_lu`
 * take the inverse of a matrix - `ulapack_inverse`
 * take the pseudo inverse of a matrix - `ulapack_pinverse`
 * find the determinant of a Matrix - `ulapack_det`
@@ -60,7 +59,7 @@ If dynamic memory allocation is used, the memory allocator and freer can be conf
 * fit a polynomial using least squares and get the polynomial coefficients - `ulapack_polyfit`
 
 ### Unit Tests
-μLAPack was developed using test-driven practices. The unit tests and `Makefile` for building and running the unit tests are in the `test/` directory. To test static memory allocation run `make ulapack_test_static`. To unit test the dynamically allocated methods, run `make ulapack_test_dynamic`. To run both tests, use `make`. `valgrind ./ulapack_test_dynamic` returns no memory leaks.
+μLAPack was developed using test-driven practices. The unit tests and `Makefile` for building and running the unit tests are in the `test/` directory. To test static memory allocation run `make ulapack_test_static`. To unit test the dynamically allocated methods, run `make ulapack_test_dynamic`. To run both tests, use `make`. `valgrind ./ulapack_test_dynamic` returns no memory leaks while using dynamic memory allocation.
 
 ### Error Codes
 The following error codes can be returned from the library functions. See the in-file documentation for the function to check its return codes of type `MatrixError_t`.
@@ -159,5 +158,8 @@ The clib math.h library is required for a square root operation in the `ulapack_
 * take the cross produce of two vector - `ulapack_cross`
 * make a skew symmetric matrix - `ulapack_skew`
 * copy array into vector - `ulapack_array_copy`
+* make a Kalman extension package `μKalman` with:
+	- model propagation
+	- Kalman gain matrix calculations using μLAPack
 
 Have a suggestion for a new feature/function? File an issue in this repository with your requests.
