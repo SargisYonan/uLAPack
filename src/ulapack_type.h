@@ -27,30 +27,43 @@
  */
 #include "ulapack_options.h"
 
+/*
+ * Define the matrix type.
+ */
+typedef ULAPACK_MATRIX_ENTRY_TYPE MatrixEntry_t;
+
+/*
+ * Define the index types.
+ */
+typedef ULAPACK_INDEX_TYPE Index_t;
+typedef ULAPACK_SIGNED_INDEX_TYPE SIndex_t;
+
 #ifdef ULAPACK_USE_STATIC_ALLOC
     /*
      * Definition for the static ulapck_matrix object.
      */
     typedef struct ulapack_matrix {
         /*@{*/
-        ulapack_entry_t entry[ULAPACK_MAX_MATRIX_N_ROWS]
-                             [ULAPACK_MAX_MATRIX_N_COLS]; /**< the matrix elements. */
+        MatrixEntry_t entry[ULAPACK_MAX_MATRIX_N_ROWS]
+                           [ULAPACK_MAX_MATRIX_N_COLS]; /**< the matrix elements. */
 
         uint64_t n_rows; /**< number of rows in the matrix. */
         uint64_t n_cols; /**< number of columns in the matrix. */
         /*@}*/
-    } ulapack_matrix_t;
-#else
+    } Matrix_t;
+#endif
+
+#ifdef ULAPACK_USE_DYNAMIC_ALLOC
     /**
      * Definition for the dynamic ulapck_matrix object.
      */
     typedef struct ulapack_matrix {
         /*@{*/
-        ulapack_entry_t **entry; /**< pointer to the matrix elements. */
+        MatrixEntry_t **entry; /**< pointer to the matrix elements. */
         uint64_t n_rows; /**< number of rows in the matrix. */
         uint64_t n_cols; /**< number of columns in the matrix. */
         /*@}*/
-    } ulapack_matrix_t;
+    } Matrix_t;
 #endif
 
 /*
@@ -64,7 +77,7 @@ typedef enum {
     ulapack_uninit_obj = -4, /**< uninitialized object passed into function. */
     ulapack_success = 1, /**< general success code. */
     /*@}*/
-} ulapack_error_t;
+} MatrixError_t;
 
 /*
  * End header guard definition.
