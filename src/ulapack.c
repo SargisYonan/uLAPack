@@ -1121,8 +1121,8 @@ MatrixError_t ulapack_det(const Matrix_t * const matrix,
 }
 
 MatrixError_t ulapack_lu(const Matrix_t * const matrix, 
-                            Matrix_t * const upper_matrix,
-                            Matrix_t * const lower_matrix) {
+                         Matrix_t * const upper_matrix,
+                         Matrix_t * const lower_matrix) {
 
     /*
      * Matrix iterators.
@@ -1833,7 +1833,7 @@ MatrixError_t ulapack_least_squares(const Matrix_t * const A,
 }
 
 /**
- * @name ulapack_elem_pow
+ * @name _ulapack_elem_pow
  * Take the power of a matrix element.
  *
  * @param element The element value to take to the power of p.
@@ -1841,8 +1841,8 @@ MatrixError_t ulapack_least_squares(const Matrix_t * const A,
  *
  * @return element^p.
  */
-static MatrixEntry_t ulapack_elem_pow(const MatrixEntry_t elem, 
-                                      const MatrixEntry_t p) {
+static MatrixEntry_t _ulapack_elem_pow(const MatrixEntry_t elem, 
+                                       const MatrixEntry_t p) {
     uint64_t pitor = 0;
 
     MatrixEntry_t power = 0;
@@ -1907,7 +1907,7 @@ MatrixError_t ulapack_vandermonde(const Matrix_t * const x,
     for (v_itor = 0; v_itor < x->n_rows; v_itor++) {
         for (col_itor = 0; col_itor < order; col_itor++) {
             V->entry[v_itor][order - 1 - col_itor] = 
-            ulapack_elem_pow(x->entry[v_itor][0], col_itor);
+            _ulapack_elem_pow(x->entry[v_itor][0], col_itor);
         }
     }
 
@@ -1953,7 +1953,7 @@ MatrixError_t ulapack_power(const Matrix_t * const matrix,
     for (row_itor = 0; row_itor < matrix->n_rows; row_itor++) {
         for (col_itor = 0; col_itor < matrix->n_cols; col_itor++) {
             result->entry[row_itor][col_itor] = 
-            ulapack_elem_pow(matrix->entry[row_itor][col_itor], power);
+            _ulapack_elem_pow(matrix->entry[row_itor][col_itor], power);
         }
     }
 
@@ -2047,7 +2047,7 @@ MatrixError_t ulapack_polyfit(const Matrix_t * const x,
     #ifdef ULAPACK_USE_DYNAMIC_ALLOC
         ulapack_destroy(V);
     #endif
-            
+
     return ulapack_success;
 }
 
