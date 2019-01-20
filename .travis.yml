@@ -5,6 +5,7 @@ before_script:
   - pushd test/
   - make
   - popd
+  - mkdir bin/
 
 script:
   - pushd bin/
