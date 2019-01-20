@@ -408,6 +408,153 @@ static MatrixError_t test_polyfit(void) {
     return ulapack_success;
 }
 
+
+static MatrixError_t test_svd(void) {
+    Matrix_t *A = NULL;
+    Matrix_t *U = NULL;
+    Matrix_t *S = NULL;
+    Matrix_t *V = NULL;
+
+    /*
+     * The number of rows in A.
+     */
+    const Index_t N = 3;
+
+    MatrixError_t ret_value;
+    
+    Index_t row_itor, col_itor = 0;
+
+    const MatrixEntry_t Adata[6][3] = {{0.0120, 2.8743, 6.4553},
+                                       {3.1642, 5.0166, 1.2322},
+                                       {6.9962, 7.6155, 5.0440},
+                                       {6.2526, 7.6241, 3.4726},
+                                       {5.4306, 5.7606, 0.9215},
+                                       {4.3904, 7.4766, 1.4785}};
+
+    printf("Testing SVD.\n");
+
+    #ifdef ULAPACK_USE_STATIC_ALLOC
+        Matrix_t Amem;
+        Matrix_t Umem;
+        Matrix_t Smem;
+        Matrix_t Vmem;
+
+        A = &Amem;
+        U = &Umem;
+        S = &Smem;
+        V = &Vmem;
+
+        ut_iserror(ulapack_init(A, N, N));
+        ut_iserror(ulapack_init(U, N, N));
+        ut_iserror(ulapack_init(S, N, 1));
+        ut_iserror(ulapack_init(V, N, N));
+
+    #endif
+
+    #ifdef ULAPACK_USE_DYNAMIC_ALLOC
+        ut_iserror(ulapack_init(&A, N, N));
+        ut_iserror(ulapack_init(&U, N, N));
+        ut_iserror(ulapack_init(&S, N, 1));
+        ut_iserror(ulapack_init(&V, N, N));
+    #endif
+
+    for (row_itor = 0; row_itor < N; row_itor++) {
+        for (col_itor = 0; col_itor < N; col_itor++) {
+            ulapack_edit_entry(A, 
+                row_itor, col_itor, 
+                Adata[row_itor][col_itor]);
+        }
+    }
+
+    printf("A = \n");
+    ulapack_print(A, stdout);
+
+    ret_value = ulapack_svd(A, U, S, V);
+    if (ut_iserror(ret_value)) {
+        return ret_value;
+    }
+
+    printf("U =\n");
+    ulapack_print(U, stdout);
+    printf("S =\n");
+    ulapack_print(S, stdout);
+    printf("V =\n");
+    ulapack_print(V, stdout);
+
+    #ifdef ULAPACK_USE_DYNAMIC_ALLOC
+        ulapack_destroy(A);
+
+        ulapack_destroy(U);
+        ulapack_destroy(S);
+        ulapack_destroy(V);
+    #endif
+
+    return ulapack_success;
+}
+
+static MatrixError_t test_pca(void) {
+    Matrix_t *A = NULL;
+    Matrix_t *T = NULL;
+
+    /*
+     * The number of rows in A.
+     */
+    const Index_t N = 3;
+
+    MatrixError_t ret_value;
+    
+    Index_t row_itor, col_itor = 0;
+
+    const MatrixEntry_t Adata[3][3] = {{0.0120, 2.8743, 6.4553},
+                                       {3.1642, 5.0166, 1.2322},
+                                       {6.9962, 7.6155, 5.0440}};
+
+    printf("Testing PCA.\n");
+
+    #ifdef ULAPACK_USE_STATIC_ALLOC
+        Matrix_t Amem;
+        Matrix_t Tmem;
+
+        A = &Amem;
+        T = &Tmem;
+
+        ut_iserror(ulapack_init(A, N, N));
+        ut_iserror(ulapack_init(T, N, N));
+
+    #endif
+
+    #ifdef ULAPACK_USE_DYNAMIC_ALLOC
+        ut_iserror(ulapack_init(&A, N, N));
+        ut_iserror(ulapack_init(&T, N, N));
+    #endif
+
+    for (row_itor = 0; row_itor < N; row_itor++) {
+        for (col_itor = 0; col_itor < N; col_itor++) {
+            ulapack_edit_entry(A, 
+                row_itor, col_itor, 
+                Adata[row_itor][col_itor]);
+        }
+    }
+
+    printf("A = \n");
+    ulapack_print(A, stdout);
+
+    ret_value = ulapack_pca(A, T);
+    if (ut_iserror(ret_value)) {
+        return ret_value;
+    }
+
+    printf("T =\n");
+    ulapack_print(T, stdout);
+
+    #ifdef ULAPACK_USE_DYNAMIC_ALLOC
+        ulapack_destroy(A);
+        ulapack_destroy(T);
+    #endif
+
+    return ulapack_success;
+}
+
 int main(void) {
 
     printf("uLAPack Unit Tests.\n");
@@ -431,6 +578,8 @@ int main(void) {
     test_initialization();
     test_basic_operations();
     test_polyfit();
+    test_svd();
+    test_pca();
 
     printf("Total Unit Test errors: %llu\n", ut_error_counter);
     return 0;

@@ -455,26 +455,41 @@ MatrixError_t ulapack_transpose(const Matrix_t * const matrix,
  * @param[in] matrix An initialized matrix object operand.
  * @param[out] result The copy of the input matrix.
  *
- * @note For a matrix, with dimensions NxM, the copy result matrix will
- *       have dimensions NxM.
- * @note If static memory allocation is specified, the dimensions of the result
- *       matrix are set to NxM.
- * @note If dynamic memory allocation is used, the dimensions of the result
- *       matrix must be NxM.
+ * @note For a matrix, with dimensions NxM, the copy result matrix must have
+ *       dimensions JxK, where J >= N and K >= M.
  *
  * @return ULAPack success code ulapack_success is returned upon a successful
  *         operation.
  *         ulapack_uninit_obj is returned if a matrix object passed in is not 
  *         initialized.
- *         ulapack_invalid_argument is returned if the result pointer is NULL.
- *         ulapack_invalid_argument is returned if dynamic memory allocation is
- *         specified and the dimensions of the result matrix do not equal the
- *         required dimensions of the matrix/vector copy.
+ *         ulapack_uninit_obj is returned if the result pointer is NULL.
+ *         ulapack_invalid_argument is returned if the result matrix is not
+ *         greater than or equal to in size over the input matrix.
  */
 MatrixError_t ulapack_copy(const Matrix_t * const matrix,
                            Matrix_t * const result);
 
-
+/**
+ * @name ulapack_diag
+ * Put a vector on the diagonal of a matrix.
+ *
+ * @note For an Nx1 vector, the matrix must be of size NxN.
+ * @note For a 1xN vector, the matrix must be of size NxN.
+ * @note The off diagonal elements of the matrix are set to 0.
+ *
+ * @param[in] vector The vector to put on the diagonal of a matrix.
+ * @param[out] matrix The matrix to put the vector on the diagonal of.
+ *
+ * @return ULAPack success code ulapack_success is returned upon a successful
+ *         operation.
+ *         ulapack_uninit_obj is returned if a matrix object passed in is not 
+ *         initialized.
+ *         ulapack_uninit_obj is returned if the result pointer is NULL.
+ *         ulapack_invalid_argument is returned if the result matrix does not
+ *         have proper dimensions, or the vector is not a vector.
+ */
+MatrixError_t ulapack_diag(const Matrix_t * const vector,
+                           Matrix_t * const matrix);
 /**
  * @name ulapack_det
  * Take the determinant of a matrix.
@@ -698,6 +713,72 @@ MatrixError_t ulapack_polyfit(const Matrix_t * const x,
                               const Matrix_t * const y,
                               const uint64_t n,
                               Matrix_t * const p);
+
+/* 
+ * @name ulapack_svd
+ * Decompose a matrix using Singular Value Decomposition (SVD). 
+ *
+ * @brief Takes an MxN matrix and decomposes it into UDV, where U and V are left
+ *        and right orthogonal transformation matrices, and D is a diagonal 
+ *        matrix of singular values.
+ *
+ *        This routine is adapted from svdecomp.c in XLISP-STAT 2.1 which is 
+ *        code from Numerical Recipes adapted by Luke Tierney and David Betz.
+ *        This code has been modified for use in ULAPack in the following ways:
+ *            - Safer type checking.
+ *            - Use with both statically and dynamically allocated memory.
+ *            - Adapted with non-clib calls (except for sqrt()).
+ *            - Use of ULAPack object types and error codes.
+ *
+ * @note The number of rows of the input matrix must be greater than or equal to
+ *       the number of columns in the input matrix, i.e. (M >= N).
+ *
+ * @param[in] matrix An MxN tall (m > n) matrix to be decomposed.
+ * @param[out] U The left orthogonal transformation matrix. U is an MxN matrix.
+ * @param[out] S The vector of singular values of the matrix. S is an N vector.
+ * @param[out] V The right orthogonal transformation matrix. V is an NxN matrix.
+ *
+ * @return ULAPack error code. 
+ *         ulapack_success is returned upon a successful decomposition. 
+ *         ulapack_error is returned if the matrix cannot be decomposed due to a 
+ *         lack of numerical convergence (1000 * MAX_CONV_LOOPS).
+ *         ulapack_unint_obj is returned if one or more of the passed in matrix
+ *         objects have not been initialized. 
+ *         ulapack_invalid_argument is returned if the matrix dimensions are not 
+ *         equal to their expected values for the SVD operation if dynamic
+ *         memory allocation is specified. If static allocation is specified
+ *         the dimensions of the passed in parameters are modified.
+ */
+#define MAX_CONV_LOOPS (30)
+MatrixError_t ulapack_svd(const Matrix_t * const matrix, 
+    Matrix_t * const U, Matrix_t * const S, Matrix_t * const V);
+
+/**
+ * @name ulapack_pca
+ * Principle Component Analysis
+ *
+ * @brief A statistical procedure that uses an orthogonal transformation to 
+ *        convert a set of observations of possibly correlated variables into a
+ *        set of values of linearly uncorrelated variables called principal 
+ *        components.
+ *
+ * @note ulapack_svd is needed to compute the PCA of a matrix.
+ *
+ * @param matrix[in] matrix The matrix to analyze.
+ * @param matrix[out] T The score matrix.
+ *
+ * @return ULAPack error code. 
+ *         ulapack_success is returned upon a successful PCA operation. 
+ *         ulapack_error is returned if the matrix cannot be decomposed due to a 
+ *         lack of numerical convergence (1000 * MAX_CONV_LOOPS) from SVD.
+ *         ulapack_unint_obj is returned if one or more of the passed in matrix
+ *         objects have not been initialized. 
+ *         ulapack_invalid_argument is returned if the dimensions of T is not 
+ *         equal to its expected value if dynamic memory allocation is 
+ *         specified. If static allocation is specified  the dimensions of the 
+ *         passed in parameters are modified.
+ */
+ MatrixError_t ulapack_pca(const Matrix_t * const matrix, Matrix_t * const T);
 
 /*
  * End header guard definition.

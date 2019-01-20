@@ -2071,28 +2071,13 @@ MatrixError_t ulapack_copy(const Matrix_t * const matrix,
      * The result pointer should not be NULL because it should be written to.
      */
     if (!_ulapack_is_valid_memory(result)) {
-        return ulapack_invalid_argument;
+        return ulapack_uninit_obj;
     }
 
-    /*
-     * The dimensions of the result pointer are changed to equal that of the
-     * input matrix if static allocation is used.
-     */
-    #ifdef ULAPACK_USE_STATIC_ALLOC
-        result->n_rows = matrix->n_rows;
-        result->n_cols = matrix->n_cols;
-    #endif
-
-    /*
-     * If dynamic memory allocation is specified, the dimensions of result 
-     * should match that of the dimensions of the input matrix.
-     */
-    #ifdef ULAPACK_USE_DYNAMIC_ALLOC
-        if ((matrix->n_rows != result->n_rows) || 
-            (matrix->n_cols != result->n_cols)) {
-            return ulapack_invalid_argument;
-        }
-    #endif
+    if (result->n_rows < matrix->n_rows ||
+        result->n_cols < matrix->n_cols) {
+        return ulapack_invalid_argument;
+    }
 
     /*
      * Copy the matrix elements.
@@ -2105,4 +2090,815 @@ MatrixError_t ulapack_copy(const Matrix_t * const matrix,
     }
 
     return ulapack_success;    
+}
+
+MatrixError_t ulapack_diag(const Matrix_t * const vector,
+                           Matrix_t * const matrix) {
+    /*
+     * Matrix iterators.
+     * Declared at top of function for legacy compiler comparability.
+     */
+    Index_t row_itor = 0;
+    Index_t col_itor = 0;
+
+    /*
+     * Verify that a valid operand object have been passed in.
+     */
+    if (!_ulapack_is_valid_memory(vector)) {
+        return ulapack_uninit_obj;
+    }
+
+    /*
+     * The result pointer should not be NULL because it should be written to.
+     */
+    if (!_ulapack_is_valid_memory(matrix)) {
+        return ulapack_uninit_obj;
+    }
+
+    MatrixError_t isv;
+    ulapack_is_vector(vector, &isv);
+    if (isv != ulapack_success) {
+        return ulapack_invalid_argument;
+    }
+
+    if (vector->n_rows >= vector->n_cols) {
+
+        #ifdef ULAPACK_USE_STATIC_ALLOC
+            matrix->n_rows = vector->n_rows;
+            matrix->n_cols = vector->n_rows;
+        #endif
+
+        #ifdef ULAPACK_USE_DYNAMIC_ALLOC
+            if (matrix->n_rows != vector->n_rows ||
+                matrix->n_cols != vector->n_rows) {
+                return ulapack_invalid_argument;
+            }
+        #endif
+
+        for (row_itor = 0; row_itor < matrix->n_rows; row_itor++) {
+            for (col_itor = 0; col_itor < matrix->n_cols; col_itor++) {
+                if (row_itor == col_itor) {
+                    matrix->entry[row_itor][col_itor] = 
+                    vector->entry[row_itor][0];
+                } else {
+                    matrix->entry[row_itor][col_itor] = 0;
+                }
+            }
+        }
+    } else {
+        #ifdef ULAPACK_USE_STATIC_ALLOC
+            matrix->n_rows = vector->n_cols;
+            matrix->n_cols = vector->n_cols;
+        #endif
+
+        #ifdef ULAPACK_USE_DYNAMIC_ALLOC
+            if (matrix->n_rows != vector->n_cols ||
+                matrix->n_cols != vector->n_cols) {
+                return ulapack_invalid_argument;
+            }
+        #endif
+
+        for (row_itor = 0; row_itor < matrix->n_rows; row_itor++) {
+            for (col_itor = 0; col_itor < matrix->n_cols; col_itor++) {
+                if (row_itor == col_itor) {
+                    matrix->entry[row_itor][col_itor] = 
+                    vector->entry[0][row_itor];
+                } else {
+                    matrix->entry[row_itor][col_itor] = 0;
+                }
+            }
+        }
+    }
+
+    return ulapack_success;
+}
+
+ /**
+ * @name ulapack_entry_abs
+ * Take the absolute value of a scalar value.
+ *
+ * @param element The value to take the absolute value of.
+ *
+ * @return The absolute value of element.
+ */
+static MatrixEntry_t ulapack_abs(const MatrixEntry_t element) {
+    if (element < 0) {
+        return -1 * element;
+    } else {
+        return element;
+    }
+}
+
+/**
+ * @name ulapack_hypot
+ * Get the value of the Pythagorean theorem from two sides of triangle.
+ *
+ * @param a The first side length of the triangle.
+ * @param b Another side length of the triangle.
+ *
+ * @return The hypotenuse of the triangle, c = sqrt(a^2 + b^2).
+ */
+static MatrixEntry_t ulapack_hypot(MatrixEntry_t a, 
+                                   MatrixEntry_t b) {
+    MatrixEntry_t c = 0;
+
+    a = ulapack_abs(a);
+    b = ulapack_abs(b);
+
+    if (a > b) { 
+        c = b / a;
+        c = a * sqrt(1 + c * c); 
+    } else if (b > 0) {
+        c = a / b; 
+        c = b * sqrt(1 + c * c); 
+    }
+
+    return(c);
+}
+
+/**
+ * @ulapack_sign
+ * Conditional sign function.
+ *
+ * @param a The value to modify based on the condition variable.
+ * @param b The condition variable.
+ *
+ * @return If the sign of b is positive, return the absolute value of a, |a|.
+ *         If the sign of b is zero or negative, return the -|a|.
+ */
+static MatrixEntry_t ulapack_sign(const MatrixEntry_t a, 
+                                  const MatrixEntry_t b) {
+    if (b > 0) {
+        return ulapack_abs(a); 
+    } else {
+        return -1 * ulapack_abs(a);
+    }   
+}
+
+/**
+ * @ulapack_max
+ * Get the sign of a value.
+ *
+ * @param a The first operand.
+ * @param b The second operand.
+ *
+ * @return If a > b, a is returned; else b.
+ */
+static MatrixEntry_t ulapack_max(const MatrixEntry_t a, const MatrixEntry_t b) {
+    if (a > b) {
+        return a;
+    } else {
+        return b;
+    }
+}
+
+MatrixError_t ulapack_svd(const Matrix_t * const matrix, 
+    Matrix_t * const U, Matrix_t * const S, Matrix_t * const V) {
+
+    Index_t flag, i, its, j, jj, k, l, nm;
+
+    /*
+     * todo: use better names for these variables.
+     */
+    MatrixEntry_t c = 0;
+    MatrixEntry_t f = 0;
+    MatrixEntry_t h = 0;
+    MatrixEntry_t s = 0;
+    MatrixEntry_t x = 0;
+    MatrixEntry_t y = 0;
+    MatrixEntry_t z = 0;
+
+    MatrixEntry_t anorm = 0;
+    MatrixEntry_t g = 0;
+    MatrixEntry_t scale = 0;
+
+    Matrix_t *temp_vector = NULL;
+
+    #ifdef ULAPACK_USE_STATIC_ALLOC
+        Matrix_t temp_vector_mem;
+        temp_vector = &temp_vector_mem;
+    #endif
+
+    /*
+     * Verify that a valid operand object have been passed in.
+     */
+    if (!_ulapack_is_valid_memory(matrix)) {
+        return ulapack_uninit_obj;
+    }
+
+    /*
+     * The input must have more rows than columns.
+     */
+    if (matrix->n_rows < matrix->n_cols) {
+        return ulapack_invalid_argument;
+    }
+
+    /*
+     * The result pointers should not be NULL because they will be written to.
+     */
+    if (!_ulapack_is_valid_memory(U) | 
+        !_ulapack_is_valid_memory(S) | 
+        !_ulapack_is_valid_memory(V)) {
+        return ulapack_uninit_obj;
+    }
+
+    /*
+     * The dimensions of the result pointers are changed to equal that of the
+     * legal dimensions if static memory allocation is specified.
+     */
+    #ifdef ULAPACK_USE_STATIC_ALLOC
+        U->n_rows = matrix->n_rows;
+        U->n_cols = matrix->n_cols;
+
+        S->n_rows = matrix->n_cols;
+        S->n_cols = 1;
+
+        V->n_rows = matrix->n_cols;
+        V->n_cols = matrix->n_cols;        
+    #endif
+        
+    /*
+     * If dynamic memory allocation is specified, the dimensions of result 
+     * should match that of the dimensions of the pseudo inverse of the matrix.
+     */
+    #ifdef ULAPACK_USE_DYNAMIC_ALLOC
+        if (U->n_rows != matrix->n_rows || U->n_cols != matrix->n_cols ||
+            S->n_rows != matrix->n_cols || S->n_cols != 1 ||
+            V->n_rows != matrix->n_cols || V->n_cols != matrix->n_cols) {
+            return ulapack_invalid_argument;
+        }
+    #endif
+
+    /*
+     * Initialize memory for scratch pad vector.
+     */
+    #ifdef ULAPACK_USE_STATIC_ALLOC
+        if (ulapack_init(temp_vector, 
+            matrix->n_cols, 1) != ulapack_success) {
+            return ulapack_error;
+        }
+    #endif
+
+    #ifdef ULAPACK_USE_DYNAMIC_ALLOC
+        if (ulapack_init(&temp_vector, 
+            matrix->n_cols, 1) != ulapack_success) {
+            return ulapack_error;
+        }
+    #endif
+
+    ulapack_copy(matrix, U);
+
+    ulapack_set(S, 0);
+    ulapack_set(V, 0);
+  
+    /* 
+     * Householder reduction to bidiagonal form.
+     */
+    for (i = 0; i < matrix->n_cols; i++) {
+
+        /* left-hand reduction */
+        l = i + 1;
+
+        temp_vector->entry[i][0] = scale * g;
+
+        g = 0;
+        s = 0;
+        scale = 0;
+
+        if (i < matrix->n_rows) {
+
+            for (k = i; k < matrix->n_rows; k++) {
+                scale += ulapack_abs(U->entry[k][i]);
+            }
+
+            if (scale) {
+                for (k = i; k < matrix->n_rows; k++) 
+                {
+                    U->entry[k][i] = U->entry[k][i] / scale;
+                    s += U->entry[k][i] * U->entry[k][i];
+                }
+
+                f = U->entry[i][i];
+                g = -1 * ulapack_sign(sqrt(s), f);
+                h = f * g - s;
+                U->entry[i][i] = f - g;
+
+                if (i != matrix->n_cols - 1) {
+                    for (j = l; j < matrix->n_cols; j++) {
+
+                        for (s = 0, k = i; k < matrix->n_rows; k++) {
+                            s += U->entry[k][i] * U->entry[k][j];
+                        }
+
+                        f = s / h;
+
+                        for (k = i; k < matrix->n_rows; k++) {
+                            U->entry[k][j] += f * U->entry[k][i];
+                        }
+                    }
+                }
+
+                for (k = i; k < matrix->n_rows; k++) {
+                    U->entry[k][i] = U->entry[k][i] * scale;
+                }
+            }
+        }
+
+        S->entry[i][0] = scale * g;
+    
+        /*
+         * Right-hand reduction.
+         */
+        g = 0;
+        s = 0;
+        scale = 0;
+        if (i < matrix->n_rows && i != matrix->n_cols - 1) {
+
+            for (k = l; k < matrix->n_cols; k++) {
+                scale += ulapack_abs(U->entry[i][k]);
+            }
+
+            if (scale) {
+                for (k = l; k < matrix->n_cols; k++) {
+                    U->entry[i][k] = U->entry[i][k] / scale;
+                    s += U->entry[i][k] * U->entry[i][k];
+                }
+
+                f = U->entry[i][l];
+                g = -1 * ulapack_sign(sqrt(s), f);
+                h = f * g - s;
+                U->entry[i][l] = f - g;
+
+                for (k = l; k < matrix->n_cols; k++) {
+                    temp_vector->entry[k][0] = U->entry[i][k] / h;
+                }
+
+                if (i != matrix->n_rows - 1) {
+                    for (j = l; j < matrix->n_rows; j++) {
+                        for (s = 0, k = l; k < matrix->n_cols; k++) {
+                            s += U->entry[j][k] * U->entry[i][k];
+                        }
+                        for (k = l; k < matrix->n_cols; k++) {
+                            U->entry[j][k] += s * temp_vector->entry[k][0];
+                        }
+                    }
+                }
+
+                for (k = l; k < matrix->n_cols; k++) {
+                    U->entry[i][k] = U->entry[i][k] * scale;
+                }
+            }
+        }
+        anorm = ulapack_max(anorm, 
+            (ulapack_abs(S->entry[i][0]) + ulapack_abs(temp_vector->entry[i][0])));
+    }
+  
+    /*
+     * Accumulate the right-hand transformation.
+     */
+    for (i = matrix->n_cols - 1; (SIndex_t)i >= 0; i--) {
+        if (i < matrix->n_cols - 1) {
+            if (g) {
+
+                for (j = l; j < matrix->n_cols; j++) {
+                    V->entry[j][i] = (U->entry[i][j] / U->entry[i][l]) / g;
+                }
+                
+                /*
+                 * Double division to avoid underflow.
+                 */
+                for (j = l; j < matrix->n_cols; j++) 
+                {
+                    for (s = 0, k = l; k < matrix->n_cols; k++) {
+                        s += U->entry[i][k] * V->entry[k][j];
+                    }
+                    for (k = l; k < matrix->n_cols; k++) {
+                        V->entry[k][j] += s * V->entry[k][i];
+                    }
+                }
+
+            }
+
+            for (j = l; j < matrix->n_cols; j++) {
+                V->entry[i][j] = 0;
+                V->entry[j][i] = 0;
+            }
+        }
+
+        V->entry[i][i] = 1;
+        g = temp_vector->entry[i][0];
+        l = i;
+    }
+  
+    /*
+     * Accumulate the left-hand transformation.
+     */
+    for (i = matrix->n_cols - 1; (SIndex_t)i >= 0; i--) {
+        l = i + 1;
+        g = S->entry[i][0];
+
+        if (i < matrix->n_cols - 1) {
+            for (j = l; j < matrix->n_cols; j++) {
+                U->entry[i][j] = 0;
+            }
+        }
+
+        if (g) {
+            g = 1 / g;
+            if (i != matrix->n_cols - 1) {
+                for (j = l; j < matrix->n_cols; j++) {
+                    for (s = 0, k = l; k < matrix->n_rows; k++) {
+                        s += U->entry[k][i] * U->entry[k][j];
+                    }
+
+                    f = (s / U->entry[i][i]) * g;
+
+                    for (k = i; k < matrix->n_rows; k++) {
+                        U->entry[k][j] += f * U->entry[k][i];
+                    }
+                }
+            }
+            for (j = i; j < matrix->n_rows; j++) {
+                U->entry[j][i] = U->entry[j][i] * g;
+            }
+        } else {
+            for (j = i; j < matrix->n_rows; j++) {
+                U->entry[j][i] = 0;
+            }
+        }
+
+        ++(U->entry[i][i]);
+    }
+
+    /* 
+     * Diagonalize the bidiagonal form. 
+     */
+    for (k = matrix->n_cols - 1; (SIndex_t)k >= 0; k--) {                             
+    /*
+     * Loop over singular values for MAX_CONV_LOOPS*1000 iterations.
+     */
+        for (its = 0; its < MAX_CONV_LOOPS; its++) {                         
+        /*
+         * Loop over allowed iterations.
+         */
+            flag = 1;
+            for (l = k; (SIndex_t)l >= 0; l--) {                     
+            /*
+             * Test for splitting.
+             */
+                nm = l - 1;
+                if (ulapack_abs(temp_vector->entry[l][0]) + anorm == anorm) {
+                    flag = 0;
+                    break;
+                }
+                if (ulapack_abs(S->entry[nm][0]) + anorm == anorm) {
+                    break;
+                }
+            }
+
+            if (flag) {
+                c = 0;
+                s = 1;
+                for (i = l; i <= k; i++) {
+                    f = s * temp_vector->entry[i][0];
+                    if (ulapack_abs(f) + anorm != anorm) {
+                        g = S->entry[i][0];
+                        h = ulapack_hypot(f, g);
+                        S->entry[i][0] = h; 
+                        h = 1 / h;
+                        c = g * h;
+                        s = -1 * f * h;
+                        for (j = 0; j < matrix->n_rows; j++) {
+                            y = U->entry[j][nm];
+                            z = U->entry[j][i];
+                            U->entry[j][nm] = y * c + z * s;
+                            U->entry[j][i] = z * c - y * s;
+                        }
+                    }
+                }
+            }
+
+            z = S->entry[k][0];
+
+            if (l == k) {                  
+                /*
+                 * Convergence.
+                 */
+                if (z < 0) {              
+                    /* 
+                     * Make singular value nonnegative. 
+                     */
+                    S->entry[k][0] = -1 * z;
+                    for (j = 0; j < matrix->n_cols; j++) {
+                        V->entry[j][k] = -1 * V->entry[j][k];
+                    }
+                }
+
+                break;
+            }
+
+            /*
+             * No convergence after 1000 * MAX_CONV_LOOPS iterations. 
+             */
+            if (its >= MAX_CONV_LOOPS) {
+
+                #ifdef ULAPACK_USE_DYNAMIC_ALLOC
+                    ulapack_destroy(temp_vector);
+                #endif
+
+                return ulapack_error;
+            }
+    
+            /* 
+             * Shift from bottom 2 x 2 minor.
+             */
+            x = S->entry[l][0];
+            nm = k - 1;
+            y = S->entry[nm][0];
+            g = temp_vector->entry[nm][0];
+            h = temp_vector->entry[k][0];
+            f = ((y - z) * (y + z) + (g - h) * (g + h)) / (2 * h * y);
+            g = ulapack_hypot(f, 1);
+            f = ((x - z) * (x + z) + h * 
+                ((y / (f + ulapack_sign(g, f))) - h)) 
+                / x;
+          
+            /* 
+             * Next QR transformation.
+             */
+            c = s = 1;
+            for (j = l; j <= nm; j++) {
+                i = j + 1;
+                g = temp_vector->entry[i][0];
+                y = S->entry[i][0];
+                h = s * g;
+                g = c * g;
+                z = ulapack_hypot(f, h);
+                temp_vector->entry[j][0] = z;
+                c = f / z;
+                s = h / z;
+                f = x * c + g * s;
+                g = g * c - x * s;
+                h = y * s;
+                y = y * c;
+
+                for (jj = 0; jj < matrix->n_cols; jj++) {
+                    x = V->entry[jj][j];
+                    z = V->entry[jj][i];
+                    V->entry[jj][j] = x * c + z * s;
+                    V->entry[jj][i] = z * c - x * s;
+                }
+
+                z = ulapack_hypot(f, h);
+
+                S->entry[j][0] = z;
+
+                if (z) {
+                    z = 1 / z;
+                    c = f * z;
+                    s = h * z;
+                }
+
+                f = (c * g) + (s * y);
+                x = (c * y) - (s * g);
+
+                for (jj = 0; jj < matrix->n_rows; jj++) {
+                    y = U->entry[jj][j];
+                    z = U->entry[jj][i];
+                    U->entry[jj][j] = y * c + z * s;
+                    U->entry[jj][i] = z * c - y * s;
+                }
+            }
+
+            temp_vector->entry[l][0] = 0;
+            temp_vector->entry[k][0] = f;
+            S->entry[k][0] = x;
+        }
+    }
+
+    #ifdef ULAPACK_USE_DYNAMIC_ALLOC
+        ulapack_destroy(temp_vector);
+    #endif
+
+    return ulapack_success;
+}
+
+MatrixError_t ulapack_pca(const Matrix_t * const matrix, Matrix_t * const T) {
+    MatrixError_t ret;
+
+    Matrix_t *matrix_transpose = NULL;
+    Matrix_t *mmT = NULL;
+    Matrix_t *Sdiag = NULL;
+
+    Matrix_t *U = NULL;
+    Matrix_t *S = NULL;
+    Matrix_t *V = NULL;
+
+    #ifdef ULAPACK_USE_STATIC_ALLOC
+        Matrix_t mTranmem;
+        Matrix_t mmTmem;
+        Matrix_t Sdiagmem;
+        Matrix_t Umem;
+        Matrix_t Smem;
+        Matrix_t Vmem;
+
+        matrix_transpose = &mTranmem;
+        mmT = &mmTmem;
+        Sdiag = &Sdiagmem;
+
+        U = &Umem;
+        S = &Smem;
+        V = &Vmem;
+    #endif
+
+    /*
+     * Verify that a valid operand object have been passed in.
+     */
+    if (!_ulapack_is_valid_memory(matrix)) {
+        return ulapack_uninit_obj;
+    }
+
+    /*
+     * The result pointer should not be NULL because it will be written to.
+     */
+    if (!_ulapack_is_valid_memory(T)) {
+        return ulapack_uninit_obj;
+    }
+
+    /*
+     * The dimensions of the result pointers are changed to equal that of the
+     * legal dimensions if static memory allocation is specified.
+     */
+    #ifdef ULAPACK_USE_STATIC_ALLOC
+        T->n_rows = matrix->n_rows;
+        T->n_cols = matrix->n_rows;
+    #endif
+        
+    /*
+     * If dynamic memory allocation is specified, the dimensions of result 
+     * should match that of the dimensions of the pseudo inverse of the matrix.
+     */
+    #ifdef ULAPACK_USE_DYNAMIC_ALLOC
+        if (T->n_rows != matrix->n_rows || T->n_cols != matrix->n_rows) {
+            return ulapack_invalid_argument;
+        }
+    #endif
+
+    /*
+     * Initialize memory for scratch pad vector.
+     */
+    #ifdef ULAPACK_USE_STATIC_ALLOC
+        if (ulapack_init(matrix_transpose, matrix->n_cols, matrix->n_rows) 
+            != ulapack_success) {
+            return ulapack_error;
+        }
+        if (ulapack_init(mmT, matrix->n_rows, matrix->n_rows) 
+            != ulapack_success) {
+            return ulapack_error;
+        }
+        if (ulapack_init(Sdiag, matrix->n_rows, matrix->n_rows) 
+            != ulapack_success) {
+            return ulapack_error;
+        }
+        if (ulapack_init(U, matrix->n_rows, matrix->n_rows) 
+            != ulapack_success) {
+            return ulapack_error;
+        }
+        if (ulapack_init(S, matrix->n_rows, 1) 
+            != ulapack_success) {
+            return ulapack_error;
+        }
+        if (ulapack_init(V, matrix->n_rows, matrix->n_rows) 
+            != ulapack_success) {
+            return ulapack_error;
+        }
+    #endif
+
+    #ifdef ULAPACK_USE_DYNAMIC_ALLOC
+        ret = ulapack_init(&matrix_transpose, matrix->n_cols, matrix->n_rows);
+        if (ret != ulapack_success) {
+            return ret;
+        }
+
+        ret = ulapack_init(&mmT, matrix->n_rows, matrix->n_rows);
+        if (ret != ulapack_success) {
+            ulapack_destroy(matrix_transpose);
+
+            return ret;
+        }
+
+        ret = ulapack_init(&Sdiag, matrix->n_rows, matrix->n_rows);
+        if (ret != ulapack_success) {
+            ulapack_destroy(matrix_transpose);
+            ulapack_destroy(mmT);
+
+            return ret;
+        }
+
+        ret = ulapack_init(&U, matrix->n_rows, matrix->n_rows);
+        if (ret != ulapack_success) {
+            ulapack_destroy(matrix_transpose);
+            ulapack_destroy(mmT);
+            ulapack_destroy(Sdiag);
+
+            return ret;
+        }
+
+        ret = ulapack_init(&S, matrix->n_rows, 1);
+        if (ret != ulapack_success) {
+            ulapack_destroy(matrix_transpose);
+            ulapack_destroy(mmT);
+            ulapack_destroy(Sdiag);
+            ulapack_destroy(U);
+
+            return ret;
+        }
+
+        ret = ulapack_init(&V, matrix->n_rows, matrix->n_rows);
+        if (ret != ulapack_success) {
+            ulapack_destroy(matrix_transpose);
+            ulapack_destroy(mmT);
+            ulapack_destroy(Sdiag);
+            ulapack_destroy(U);
+            ulapack_destroy(S);
+
+            return ret;
+        }
+    #endif
+
+    ret = ulapack_transpose(matrix, matrix_transpose);
+    if (ret != ulapack_success) {
+        #ifdef ULAPACK_USE_DYNAMIC_ALLOC
+            ulapack_destroy(matrix_transpose);
+            ulapack_destroy(mmT);
+            ulapack_destroy(Sdiag);
+            ulapack_destroy(U);
+            ulapack_destroy(S);
+            ulapack_destroy(V);
+        #endif
+        return ret;
+    }
+
+    ret = ulapack_product(matrix, matrix_transpose, mmT);
+    if (ret != ulapack_success) {
+        #ifdef ULAPACK_USE_DYNAMIC_ALLOC
+            ulapack_destroy(matrix_transpose);
+            ulapack_destroy(mmT);
+            ulapack_destroy(Sdiag);
+            ulapack_destroy(U);
+            ulapack_destroy(S);
+            ulapack_destroy(V);
+        #endif
+        return ret;
+    }
+
+    ret = ulapack_svd(mmT, U, S, V);
+    if (ret != ulapack_success) {
+        #ifdef ULAPACK_USE_DYNAMIC_ALLOC
+            ulapack_destroy(matrix_transpose);
+            ulapack_destroy(mmT);
+            ulapack_destroy(Sdiag);
+            ulapack_destroy(U);
+            ulapack_destroy(S);
+            ulapack_destroy(V);
+        #endif
+        return ret;
+    }
+
+    ret = ulapack_diag(S, Sdiag);
+    if (ret != ulapack_success) {
+        #ifdef ULAPACK_USE_DYNAMIC_ALLOC
+            ulapack_destroy(matrix_transpose);
+            ulapack_destroy(mmT);
+            ulapack_destroy(Sdiag);
+            ulapack_destroy(U);
+            ulapack_destroy(S);
+            ulapack_destroy(V);
+        #endif
+        return ret;
+    }    
+
+    ret = ulapack_product(U, Sdiag, T);
+    if (ret != ulapack_success) {
+        #ifdef ULAPACK_USE_DYNAMIC_ALLOC
+            ulapack_destroy(matrix_transpose);
+            ulapack_destroy(mmT);
+            ulapack_destroy(Sdiag);
+            ulapack_destroy(U);
+            ulapack_destroy(S);
+            ulapack_destroy(V);
+        #endif
+        return ret;
+    }
+
+    #ifdef ULAPACK_USE_DYNAMIC_ALLOC
+        ulapack_destroy(matrix_transpose);
+        ulapack_destroy(mmT);
+        ulapack_destroy(Sdiag);
+        ulapack_destroy(U);
+        ulapack_destroy(S);
+        ulapack_destroy(V);
+    #endif
+
+    return ulapack_success;
 }

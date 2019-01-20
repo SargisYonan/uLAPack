@@ -43,6 +43,7 @@ If dynamic memory allocation is used, the memory allocator and freer can be conf
 * add two matrices/vectors - `ulapack_add`
 * subtract two matrices/vectors - `ulapack_subtract`
 * scale a matrix/vector by a scalar - `ulapack_scale`
+* put a vector on the diagonal of a matrix - `ulapack_diag`
 * take the norm of a vector or Frobenius norm of a matrix - `ulapack_norm`
 * take the product of two matrices/vectors - `ulapack_product`
 * take the transpose of a matrix/vector - `ulapack_transpose`
@@ -57,6 +58,8 @@ If dynamic memory allocation is used, the memory allocator and freer can be conf
 * create a Vandermonde matrix from a vector - `ulapack_vandermonde`
 * compute the least squares of a matrix/system - `ulapack_least_squares`
 * fit a polynomial using least squares and get the polynomial coefficients - `ulapack_polyfit`
+* decompose a matrix via Singular Value Decomposition (SVD) - `ulapack_svd`
+* compute a Principle Component Analysis (PCA) from a matrix - `ulapack_pca`
 
 ### Unit Tests
 μLAPack was developed using test-driven practices. The unit tests and `Makefile` for building and running the unit tests are in the `test/` directory. To test static memory allocation run `make ulapack_test_static`. To unit test the dynamically allocated methods, run `make ulapack_test_dynamic`. To run both tests, use `make`. `valgrind ./ulapack_test_dynamic` returns no memory leaks while using dynamic memory allocation.
@@ -152,13 +155,13 @@ The libc math.h library is required for a square root operation in the `ulapack_
 
 # TODO
 * find occurrences and indices of a value in a matrix/vector - `ulapack_find`
-* Singular Value Decomposition (SVD) of a matrix - `ulapack_SVD`
 * take the pseudo inverse of a matrix via SVD (good for poorly conditioned matrix inversions)
 * grab a sub-matrix from a matrix/vector (similar to the `:` operator in MATLAB) - `ulapack_copy_submatrix`
-* take the cross produce of two vector - `ulapack_cross`
+* take the cross product of two vector - `ulapack_cross`
 * write an element square root function to replace libc call
 * make a skew symmetric matrix - `ulapack_skew`
 * copy array into vector - `ulapack_array_copy`
+* more code examples
 * make a Kalman extension package `μKalman` with:
 	- model propagation
 	- Kalman gain matrix calculations using μLAPack
