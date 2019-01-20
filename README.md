@@ -164,7 +164,7 @@ The libc math.h library is required for a square root operation in the `ulapack_
 μLAPack and any derivative works of μLAPack (and embedded_lapack) are free to use for personal and/or educational use without profit and for development purposes in your project(s) to verify if μLAPack is right for you. Contact Sargis Yonan at sargis@yonan.org with the subject line `uLAPack Licensing` to further discuss developer licensing for your project/product, and redistribution. Refer to the [LICENSE](LICENSE) document for licensing details.
 
 # Legacy
-μLAPack is a fork of my now deprecated [embedded_lapack](https://www.github.com/SargisYonan/embedded_lapack) library. This version includes definitions for both static and dynamic memory allocation, safer type definitions, more explicit and safer error code status, Doxygen, and more compiler support.
+μLAPack is a fork of my now deprecated [embedded_lapack](https://www.github.com/SargisYonan/embedded_lapack) library. μLAPack includes definitions for both static and dynamic memory allocation, safer type definitions, more explicit and safer error code status, Doxygen, more functionality, and more compiler support when compared to embedded_lapack.
 
 # TODO
 * find occurrences and indices of a value in a matrix/vector - `ulapack_find`
