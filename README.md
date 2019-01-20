@@ -7,32 +7,10 @@ A small linear algebra package to compute various matrix/vector operations.
 The library is optimized to work on microcontrollers and embedded environments, but can be used anywhere C can be compiled.
 
 ## Features
-All μLAPack functions are "safe" in that the matrix/vector operations are checked for initialization and mathematic dimensional legality before an operation takes place.
-
-### Options
-Compile time options can be set in either the file `ulapack_options.h` or in a build/make system. The user of μLAPack can make the following considerations while using the library.
-
-#### Static Memory Allocation
-The user of this library has the option of only using static memory allocation. This option is most suitable in embedded environments that can not dynamically allocate memory because of safety concerns with calls to alloc and because of time critical requirements. The macro `ULAPACK_USE_STATIC_ALLOC` must be `#define`d at compile time in order to use the static memory allocation feature. The static allocation technique relies on using overhead memory in the static matrix memory allocation. Due to this technique, the maximum possible row and column dimensions of any matrix object must be explicitly defined at compile time via the macros: `ULAPACK_MAX_MATRIX_N_ROWS` and `ULAPACK_MAX_MATRIX_N_COLS`. Any matrix initialized after compile time can not exceed the dimensions defined by the macros, and an error will be returned upon initialization if this is attempted.
-
-#### Dynamic Memory Allocation
-Define `ULAPACK_USE_DYNAMIC_ALLOC` to specify using dynamic memory allocation for all objects.
-
-#### Choose Your Entry Container Type
-The user of this library has the option of setting the matrix/vector element data type to a desired type via the `ULAPACK_MATRIX_ENTRY_TYPE` `#define`. It is recommended that a primitive floating point type is used. `ULAPACK_MATRIX_ENTRY_TYPE` is set to `double` by default, and is `typedef`ed to `MatrixEntry_t` in the source code.
-`MINIMUM_THRESHOLD_TOLERANCE` defines the threshold floating point limit for a 0.
-
-#### Clear Upon Initialization
-All new matrix/vector objects made can be initialized to zeros if `ULAPACK_INITIALIZE_MEMORY` is defined at compile time.
-
-#### Matrix Inversion Options
-Define `ULAPACK_INVERSE_VIA_LU` to use LU decomposition for matrix inversions.
-
-#### Allocator/Freer Options
-If dynamic memory allocation is used, the memory allocator and freer can be configured via the macros `ULAPACK_ALLOC` and `ULAPACK_FREE`.
+All μLAPack functions are "safe" in that the matrix/vector operations are checked for initialization and mathematic dimensional legality before an operation takes place. The library contains various operations and manipulations that can be configured to your needs. The library can be configured to run safely in even the most constrained environments where memory allocation is a concern.
 
 ### Included Functionality
-μLAPack contains functionality to assist in your matrix math needs for feedback control, statistical analysis, data processing, filtering, estimation, and machine learning.
+μLAPack contains functionality to assist in your matrix math needs for feedback control, statistical analysis, data processing, filtering, estimation, basic algebraic computation, and machine learning.
 
 #### Library Specific Functions
 * Initialize a matrix/vector object - `ulapack_initialize`
@@ -73,6 +51,28 @@ If dynamic memory allocation is used, the memory allocator and freer can be conf
 * Fit an nth degree polynomial - `ulapack_polyfit`
 * Decompose a matrix via Singular Value Decomposition (SVD) - `ulapack_svd`
 * Compute a score matrix via Principle Component Analysis (PCA) - `ulapack_pca`
+
+### Options
+Compile time options can be set in either the file `ulapack_options.h` or in a build/make system. The user of μLAPack can make the following considerations while using the library.
+
+#### Static Memory Allocation
+The user of this library has the option of only using static memory allocation. This option is most suitable in embedded environments that can not dynamically allocate memory because of safety concerns with calls to alloc and because of time critical requirements. The macro `ULAPACK_USE_STATIC_ALLOC` must be `#define`d at compile time in order to use the static memory allocation feature. The static allocation technique relies on using overhead memory in the static matrix memory allocation. Due to this technique, the maximum possible row and column dimensions of any matrix object must be explicitly defined at compile time via the macros: `ULAPACK_MAX_MATRIX_N_ROWS` and `ULAPACK_MAX_MATRIX_N_COLS`. Any matrix initialized after compile time can not exceed the dimensions defined by the macros, and an error will be returned upon initialization if this is attempted.
+
+#### Dynamic Memory Allocation
+Define `ULAPACK_USE_DYNAMIC_ALLOC` to specify using dynamic memory allocation for all objects.
+
+#### Choose Your Entry Container Type
+The user of this library has the option of setting the matrix/vector element data type to a desired type via the `ULAPACK_MATRIX_ENTRY_TYPE` `#define`. It is recommended that a primitive floating point type is used. `ULAPACK_MATRIX_ENTRY_TYPE` is set to `double` by default, and is `typedef`ed to `MatrixEntry_t` in the source code.
+`MINIMUM_THRESHOLD_TOLERANCE` defines the threshold floating point limit for a 0.
+
+#### Clear Upon Initialization
+All new matrix/vector objects made can be initialized to zeros if `ULAPACK_INITIALIZE_MEMORY` is defined at compile time.
+
+#### Matrix Inversion Options
+Define `ULAPACK_INVERSE_VIA_LU` to use LU decomposition for matrix inversions.
+
+#### Allocator/Freer Options
+If dynamic memory allocation is used, the memory allocator and freer can be configured via the macros `ULAPACK_ALLOC` and `ULAPACK_FREE`.
 
 ### Unit Tests
 μLAPack was developed using test-driven practices. The unit tests and `Makefile` for building and running the unit tests are in the `test/` directory. To test static memory allocation run `make ulapack_test_static`. To unit test the dynamically allocated methods, run `make ulapack_test_dynamic`. To run both tests, use `make`. `valgrind ./ulapack_test_dynamic` returns no memory leaks while using dynamic memory allocation.
