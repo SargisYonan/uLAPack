@@ -18,7 +18,7 @@ $(static_test_exec) : static_unit_tests.o ulapack_static.o
 	cc $(cc_options) unit_tests.o ulapack.o -lm -o $(static_test_exec)
 
 $(dynamic_test_exec) : dynamic_unit_tests.o ulapack_dynamic.o
-	cc $(cc_options) unit_tests.o ulapack.o -o $(dynamic_test_exec)
+	cc $(cc_options) unit_tests.o ulapack.o -lm -o $(dynamic_test_exec)
 
 dynamic_unit_tests.o : unit_tests.c ulapack_dynamic.o
 	cc $(cc_options) -I$(src) -c unit_tests.c $(dynamic_test_options)
