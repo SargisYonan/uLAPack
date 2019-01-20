@@ -1,9 +1,11 @@
 language: c
 sudo: false
 
-script:
+before_script: 
   - cd test/
   - make ulapack_test_static
-  - ./ulapack_test_static
   - make ulapack_test_dynamic
+
+script:
+  - ./ulapack_test_static
   - ./ulapack_test_dynamic
