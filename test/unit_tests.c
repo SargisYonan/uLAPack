@@ -14,6 +14,8 @@
 #include <math.h>
 #include <stdio.h>
 
+#define M_PI 3.14159265358979323846264338327
+
 /*
  * Total unit test error counter.
  */
