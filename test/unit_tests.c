@@ -581,7 +581,8 @@ int main(void) {
     test_svd();
     test_pca();
 
-    printf("Total Unit Test errors: %llu\n", ut_error_counter);
+    printf("Total Unit Test errors: %llu\n", 
+        (long long unsigned int)ut_error_counter);
     return 0;
 }
 
