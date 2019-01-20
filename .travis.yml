@@ -1,0 +1,12 @@
+language: c
+sudo: false
+
+script:
+  - cd test/
+  - make ulapack_test_static
+  - ./ulapack_test_static
+  - make ulapack_test_dynamic
+  - ./ulapack_test_dynamic
+
+after_success:
+  - bash <(curl -s https://codecov.io/bash)
