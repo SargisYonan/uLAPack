@@ -20,6 +20,7 @@ Define `ULAPACK_USE_DYNAMIC_ALLOC` to specify using dynamic memory allocation fo
 
 #### Choose Your Entry Container Type
 The user of this library has the option of setting the matrix/vector element data type to a desired type via the `ULAPACK_MATRIX_ENTRY_TYPE` `#define`. It is recommended that a primitive floating point type is used. `ULAPACK_MATRIX_ENTRY_TYPE` is set to `double` by default, and is `typedef`ed to `MatrixEntry_t` in the source code.
+`MINIMUM_THRESHOLD_TOLERANCE` defines the threshold floating point limit for a 0.
 
 #### Clear Upon Initialization
 All new matrix/vector objects made can be initialized to zeros if `ULAPACK_INITIALIZE_MEMORY` is defined at compile time.
@@ -31,35 +32,47 @@ Define `ULAPACK_INVERSE_VIA_LU` to use LU decomposition for matrix inversions.
 If dynamic memory allocation is used, the memory allocator and freer can be configured via the macros `ULAPACK_ALLOC` and `ULAPACK_FREE`.
 
 ### Included Functionality
+μLAPack contains functionality to assist in your matrix math needs for feedback control, statistical analysis, data processing, filtering, estimation, and machine learning.
+
+#### Library Specific Functions
 * Initialize a matrix/vector object - `ulapack_initialize`
 * Print a matrix/vector to an output file stream - `ulapack_print`
-* element editing - `ulapack_edit_entry`
-* element getting - `ulapack_get_entry`
-* get matrix/vector size - `ulapack_size`
-* set matrix/vector to one value - `ulapack_set`
-* check for matrix/vector equality - `ulapack_is_equal`
-* set a square matrix to the identity - `ulapack_eye` 
-* sum the elements of a matrix/vector - `ulapack_sum`
-* add two matrices/vectors - `ulapack_add`
-* subtract two matrices/vectors - `ulapack_subtract`
-* scale a matrix/vector by a scalar - `ulapack_scale`
-* put a vector on the diagonal of a matrix - `ulapack_diag`
-* take the norm of a vector or Frobenius norm of a matrix - `ulapack_norm`
-* take the product of two matrices/vectors - `ulapack_product`
-* take the transpose of a matrix/vector - `ulapack_transpose`
-* copy the contents of a matrix/vector - `ulapack_copy`
-* take the trace of a matrix - `ulapack_trace`
-* query an object to see if it is a vector - `ulapack_is_vector`
-* take the inner product of two vectors - `ulapack_dot`
-* decompose a matrix into LU triangular matrices - `ulapack_lu`
-* take the inverse of a matrix - `ulapack_inverse`
-* take the pseudo inverse of a matrix - `ulapack_pinverse`
-* find the determinant of a Matrix - `ulapack_det`
-* create a Vandermonde matrix from a vector - `ulapack_vandermonde`
-* compute the least squares of a matrix/system - `ulapack_least_squares`
-* fit a polynomial using least squares and get the polynomial coefficients - `ulapack_polyfit`
-* decompose a matrix via Singular Value Decomposition (SVD) - `ulapack_svd`
-* compute a Principle Component Analysis (PCA) from a matrix - `ulapack_pca`
+* Free dynamically allocated matrix/vector memory - `ulapack_destroy`
+* Safely edit a matrix/vector element - `ulapack_edit_entry`
+* Safely modify a matrix/vector element - `ulapack_get_entry`
+* Query an object to see if it is a vector - `ulapack_is_vector`
+* Copy the contents of a matrix or vector - `ulapack_copy`
+
+#### Basic Matrix/Vector Operations
+* Get the size of a matrix or vector - `ulapack_size`
+* Check if two matrices or vectors are equal in value - `ulapack_is_equal`
+
+##### Arithmetic
+* Sum the elements of a matrix or vector - `ulapack_sum`
+* Add two matrices or vectors - `ulapack_add`
+* Subtract two matrices or vectors - `ulapack_subtract`
+* Take the trace of a matrix - `ulapack_trace`
+* Take the product of two matrices or vectors - `ulapack_product`
+* Take the inner product of two vectors - `ulapack_dot`
+* Take the norm of a vector or Frobenius norm of a matrix - `ulapack_norm`
+* Find the determinant of a Matrix - `ulapack_det`
+* Scale a matrix or vector by a scalar - `ulapack_scale`
+
+##### Manipulations
+* Put a vector on the diagonal of a matrix - `ulapack_diag`
+* Set a square matrix to the identity matrix - `ulapack_eye` 
+* Safely set the entirety of matrix/vector to a single value - `ulapack_set`
+* Take the transpose of a matrix or vector - `ulapack_transpose`
+* Take the inverse of a matrix - `ulapack_inverse`
+* Take the pseudo inverse of a matrix - `ulapack_pinverse`
+
+#### Advanced Operations
+* Decompose a matrix into LU triangular matrices - `ulapack_lu`
+* Create a Vandermonde matrix from a vector - `ulapack_vandermonde`
+* Compute the least squares of a matrix/system - `ulapack_least_squares`
+* Fit an nth degree polynomial - `ulapack_polyfit`
+* Decompose a matrix via Singular Value Decomposition (SVD) - `ulapack_svd`
+* Compute a score matrix via Principle Component Analysis (PCA) - `ulapack_pca`
 
 ### Unit Tests
 μLAPack was developed using test-driven practices. The unit tests and `Makefile` for building and running the unit tests are in the `test/` directory. To test static memory allocation run `make ulapack_test_static`. To unit test the dynamically allocated methods, run `make ulapack_test_dynamic`. To run both tests, use `make`. `valgrind ./ulapack_test_dynamic` returns no memory leaks while using dynamic memory allocation.
