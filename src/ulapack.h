@@ -591,8 +591,6 @@ MatrixError_t ulapack_inverse(const Matrix_t * const matrix,
  *         ulapack_invalid_argument is returned if dynamic memory allocation is
  *         specified and the dimensions of the result matrix do not equal the
  *         required dimensions of the matrix inversion.
- *         ulapack_invalid_argument is returned if the input matrix is not 
- *         square.
  */
 MatrixError_t ulapack_pinverse(const Matrix_t * const matrix,
                                Matrix_t * const pinverse);

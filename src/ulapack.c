@@ -32,6 +32,117 @@ static MatrixError_t _ulapack_is_valid_memory(const Matrix_t *mat) {
     return ulapack_success;
 }
 
+/**
+ * @name ulapack_entry_abs
+ * Take the absolute value of a scalar value.
+ *
+ * @param element The value to take the absolute value of.
+ *
+ * @return The absolute value of element.
+ */
+static MatrixEntry_t ulapack_abs(const MatrixEntry_t element) {
+    if (element < 0) {
+        return -1 * element;
+    } else {
+        return element;
+    }
+}
+
+/**
+ * @name _ulapack_elem_pow
+ * Take the power of a matrix element.
+ *
+ * @param element The element value to take to the power of p.
+ * @param p The power to take the element to.
+ *
+ * @return element^p.
+ */
+static MatrixEntry_t _ulapack_elem_pow(const MatrixEntry_t elem, 
+                                       const MatrixEntry_t p) {
+    uint64_t pitor = 0;
+
+    MatrixEntry_t power = 0;
+
+    if (p == 0) {
+        return 1;
+    } else {
+
+        if (elem == 0) {
+            return 0;
+        }
+
+        power = 1;
+        for (pitor = 0; pitor < p; pitor++) {
+            power *= elem;
+        }        
+    }
+
+    return power;
+}
+
+/**
+ * @name ulapack_hypot
+ * Get the value of the Pythagorean theorem from two sides of triangle.
+ *
+ * @param a The first side length of the triangle.
+ * @param b Another side length of the triangle.
+ *
+ * @return The hypotenuse of the triangle, c = sqrt(a^2 + b^2).
+ */
+static MatrixEntry_t ulapack_hypot(MatrixEntry_t a, 
+                                   MatrixEntry_t b) {
+    MatrixEntry_t c = 0;
+
+    a = ulapack_abs(a);
+    b = ulapack_abs(b);
+
+    if (a > b) { 
+        c = b / a;
+        c = a * sqrt(1 + c * c); 
+    } else if (b > 0) {
+        c = a / b; 
+        c = b * sqrt(1 + c * c); 
+    }
+
+    return(c);
+}
+
+/**
+ * @ulapack_sign
+ * Conditional sign function.
+ *
+ * @param a The value to modify based on the condition variable.
+ * @param b The condition variable.
+ *
+ * @return If the sign of b is positive, return the absolute value of a, |a|.
+ *         If the sign of b is zero or negative, return the -|a|.
+ */
+static MatrixEntry_t ulapack_sign(const MatrixEntry_t a, 
+                                  const MatrixEntry_t b) {
+    if (b > 0) {
+        return ulapack_abs(a); 
+    } else {
+        return -1 * ulapack_abs(a);
+    }   
+}
+
+/**
+ * @ulapack_max
+ * Get the sign of a value.
+ *
+ * @param a The first operand.
+ * @param b The second operand.
+ *
+ * @return If a > b, a is returned; else b.
+ */
+static MatrixEntry_t ulapack_max(const MatrixEntry_t a, const MatrixEntry_t b) {
+    if (a > b) {
+        return a;
+    } else {
+        return b;
+    }
+}
+
 MatrixError_t ulapack_init(
     #ifdef ULAPACK_USE_STATIC_ALLOC
         Matrix_t *matrix,
@@ -384,7 +495,9 @@ MatrixError_t ulapack_is_equal(const Matrix_t * const A,
              * If a mismatch occurs, set is_equal to ulapack_error, and return
              * ulapack_success to indicate a successful comparison.
              */
-            if (A->entry[row_itor][col_itor] != B->entry[row_itor][col_itor]) {
+            if (ulapack_abs(A->entry[row_itor][col_itor] - 
+                            B->entry[row_itor][col_itor]) >
+                MINIMUM_THRESHOLD_TOLERANCE) {
                 *is_equal = ulapack_error;
                 return ulapack_success;
             }
@@ -1832,38 +1945,6 @@ MatrixError_t ulapack_least_squares(const Matrix_t * const A,
     return ulapack_success;
 }
 
-/**
- * @name _ulapack_elem_pow
- * Take the power of a matrix element.
- *
- * @param element The element value to take to the power of p.
- * @param p The power to take the element to.
- *
- * @return element^p.
- */
-static MatrixEntry_t _ulapack_elem_pow(const MatrixEntry_t elem, 
-                                       const MatrixEntry_t p) {
-    uint64_t pitor = 0;
-
-    MatrixEntry_t power = 0;
-
-    if (p == 0) {
-        return 1;
-    } else {
-
-        if (elem == 0) {
-            return 0;
-        }
-
-        power = 1;
-        for (pitor = 0; pitor < p; pitor++) {
-            power *= elem;
-        }        
-    }
-
-    return power;
-}
-
 MatrixError_t ulapack_vandermonde(const Matrix_t * const x,
                                   const Index_t order, 
                                   Matrix_t * const V) {
@@ -2173,89 +2254,17 @@ MatrixError_t ulapack_diag(const Matrix_t * const vector,
     return ulapack_success;
 }
 
- /**
- * @name ulapack_entry_abs
- * Take the absolute value of a scalar value.
- *
- * @param element The value to take the absolute value of.
- *
- * @return The absolute value of element.
- */
-static MatrixEntry_t ulapack_abs(const MatrixEntry_t element) {
-    if (element < 0) {
-        return -1 * element;
-    } else {
-        return element;
-    }
-}
-
-/**
- * @name ulapack_hypot
- * Get the value of the Pythagorean theorem from two sides of triangle.
- *
- * @param a The first side length of the triangle.
- * @param b Another side length of the triangle.
- *
- * @return The hypotenuse of the triangle, c = sqrt(a^2 + b^2).
- */
-static MatrixEntry_t ulapack_hypot(MatrixEntry_t a, 
-                                   MatrixEntry_t b) {
-    MatrixEntry_t c = 0;
-
-    a = ulapack_abs(a);
-    b = ulapack_abs(b);
-
-    if (a > b) { 
-        c = b / a;
-        c = a * sqrt(1 + c * c); 
-    } else if (b > 0) {
-        c = a / b; 
-        c = b * sqrt(1 + c * c); 
-    }
-
-    return(c);
-}
-
-/**
- * @ulapack_sign
- * Conditional sign function.
- *
- * @param a The value to modify based on the condition variable.
- * @param b The condition variable.
- *
- * @return If the sign of b is positive, return the absolute value of a, |a|.
- *         If the sign of b is zero or negative, return the -|a|.
- */
-static MatrixEntry_t ulapack_sign(const MatrixEntry_t a, 
-                                  const MatrixEntry_t b) {
-    if (b > 0) {
-        return ulapack_abs(a); 
-    } else {
-        return -1 * ulapack_abs(a);
-    }   
-}
-
-/**
- * @ulapack_max
- * Get the sign of a value.
- *
- * @param a The first operand.
- * @param b The second operand.
- *
- * @return If a > b, a is returned; else b.
- */
-static MatrixEntry_t ulapack_max(const MatrixEntry_t a, const MatrixEntry_t b) {
-    if (a > b) {
-        return a;
-    } else {
-        return b;
-    }
-}
-
 MatrixError_t ulapack_svd(const Matrix_t * const matrix, 
     Matrix_t * const U, Matrix_t * const S, Matrix_t * const V) {
 
-    Index_t flag, i, its, j, jj, k, l, nm;
+    Index_t flag = 0;
+    Index_t i = 0;
+    Index_t its = 0;
+    Index_t j = 0;
+    Index_t jj = 0;
+    Index_t k = 0;
+    Index_t l = 0;
+    Index_t nm = 0;
 
     /*
      * todo: use better names for these variables.

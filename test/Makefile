@@ -8,11 +8,11 @@ dynamic_test_options=-DULAPACK_USE_DYNAMIC_ALLOC=1
 
 src=../src
 
+all : $(static_test_exec) $(dynamic_test_exec)
+
 test : $(static_test_exec) $(dynamic_test_exec)
 	./$(static_test_exec)
 	./$(dynamic_test_exec)
-
-all : build_static build_dynamic
 
 $(static_test_exec) : static_unit_tests.o ulapack_static.o
 	cc $(cc_options) unit_tests.o ulapack.o -o $(static_test_exec)
