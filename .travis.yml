@@ -2,18 +2,12 @@ language: c
 sudo: false
 
 before_script: 
-  - pushd test/
+  - cd test/
   - make
-  - popd
-  - mkdir bin/
 
 script:
-  - pushd bin/
   - ./ulapack_test_static
   - ./ulapack_test_dynamic
-  - popd
 
 after_script:
-  - pushd test/
   - make clean
-  - popd
