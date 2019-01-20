@@ -47,9 +47,10 @@
 #endif
 
 /*
- * Small value for floating point tolerance considerations for inversions.
+ * Small value for floating point tolerance considerations
+ * for inversions and FP tolerance.
  */
-#define MINIMUM_THRESHOLD_TOLERANCE (.0001)
+#define MINIMUM_THRESHOLD_TOLERANCE (.00001)
 
 /*
  * Defined if memory should be initialized to zeros.
@@ -79,8 +80,7 @@
 
 #ifdef ULAPACK_USE_STATIC_ALLOC
     #ifdef ULAPACK_USE_DYNAMIC_ALLOC
-        #error "Error: Both ULAPACK_USE_DYNAMIC_ALLOC and ULAPACK_USE_STATIC_ALLOC can not be 
-                simultaneously defined."
+        #error "Error: Both ULAPACK_USE_DYNAMIC_ALLOC and ULAPACK_USE_STATIC_ALLOC can not be simultaneously defined."
     #endif
 #endif
 
@@ -117,8 +117,8 @@
      *
      * @note only required to be specified when static allocation is used.
      */
-    #define ULAPACK_MAX_MATRIX_N_ROWS (50u)
-    #define ULAPACK_MAX_MATRIX_N_COLS (50u)
+    #define ULAPACK_MAX_MATRIX_N_ROWS (20u)
+    #define ULAPACK_MAX_MATRIX_N_COLS (20u)
 
     /*
      * The maximum number of rows and columns must be specified
