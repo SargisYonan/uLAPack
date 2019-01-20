@@ -1,4 +1,4 @@
-cc=gcc-6
+cc=cc
 cc_options=-std=c99 -Wall -Wextra -Werror -Os
 
 static_test_exec=ulapack_test_static
