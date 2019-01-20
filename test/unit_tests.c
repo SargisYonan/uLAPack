@@ -14,9 +14,7 @@
 #include <math.h>
 #include <stdio.h>
 
-#if defined(_ANSI_SOURCE)
-    #define M_PI 3.14159265358979323846264338327
-#endif
+#define UT_PI 3.14159265358979323846264338327
 
 /*
  * Total unit test error counter.
@@ -257,18 +255,18 @@ static MatrixError_t test_basic_operations(void) {
     /*
      * Set B equal to a matrix of all pi.
      */
-    ulapack_set(B, M_PI);
+    ulapack_set(B, UT_PI);
     ut_iserror(ulapack_add(A, B, result));
 
-    ulapack_edit_entry(expected, 0, 0, M_PI + 3);
-    ulapack_edit_entry(expected, 0, 1, M_PI);
-    ulapack_edit_entry(expected, 0, 2, M_PI);
-    ulapack_edit_entry(expected, 1, 0, M_PI);
-    ulapack_edit_entry(expected, 1, 1, M_PI + 3);
-    ulapack_edit_entry(expected, 1, 2, M_PI);
-    ulapack_edit_entry(expected, 2, 0, M_PI);
-    ulapack_edit_entry(expected, 2, 1, M_PI);
-    ulapack_edit_entry(expected, 2, 2, M_PI + 3);
+    ulapack_edit_entry(expected, 0, 0, UT_PI + 3);
+    ulapack_edit_entry(expected, 0, 1, UT_PI);
+    ulapack_edit_entry(expected, 0, 2, UT_PI);
+    ulapack_edit_entry(expected, 1, 0, UT_PI);
+    ulapack_edit_entry(expected, 1, 1, UT_PI + 3);
+    ulapack_edit_entry(expected, 1, 2, UT_PI);
+    ulapack_edit_entry(expected, 2, 0, UT_PI);
+    ulapack_edit_entry(expected, 2, 1, UT_PI);
+    ulapack_edit_entry(expected, 2, 2, UT_PI + 3);
 
     ulapack_is_equal(expected, result, &ret_value);
 
