@@ -14,7 +14,9 @@
 #include <math.h>
 #include <stdio.h>
 
-#define M_PI 3.14159265358979323846264338327
+#if defined(_ANSI_SOURCE)
+    #define M_PI 3.14159265358979323846264338327
+#endif
 
 /*
  * Total unit test error counter.
@@ -577,11 +579,21 @@ int main(void) {
     #endif
             
 
-    test_initialization();
-    test_basic_operations();
-    test_polyfit();
-    test_svd();
-    test_pca();
+    if (test_initialization() != ulapack_success) {
+        return ulapack_error;
+    }
+    if (test_basic_operations() != ulapack_success) {
+        return ulapack_error;
+    }
+    if (test_polyfit() != ulapack_success) {
+        return ulapack_error;
+    }
+    if (test_svd() != ulapack_success) {
+        return ulapack_error;
+    }
+    if (test_pca() != ulapack_success) {
+        return ulapack_error;
+    }
 
     printf("Total Unit Test errors: %llu\n", 
         (long long unsigned int)ut_error_counter);

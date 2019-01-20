@@ -117,8 +117,12 @@
      *
      * @note only required to be specified when static allocation is used.
      */
-    #define ULAPACK_MAX_MATRIX_N_ROWS (20u)
-    #define ULAPACK_MAX_MATRIX_N_COLS (20u)
+    #ifndef ULAPACK_MAX_MATRIX_N_ROWS
+        #define ULAPACK_MAX_MATRIX_N_ROWS (20u)
+    #endif
+    #ifndef ULAPACK_MAX_MATRIX_N_COLS
+        #define ULAPACK_MAX_MATRIX_N_COLS (20u)
+    #endif
 
     /*
      * The maximum number of rows and columns must be specified
