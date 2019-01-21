@@ -7,7 +7,7 @@ A small linear algebra package to compute various matrix/vector operations.
 The library is optimized to work on microcontrollers and embedded environments, but can be used anywhere C can be compiled.
 
 
-[![Build Status](https://travis-ci.com/SargisYonan/uLAPack.svg?branch=master)](https://travis-ci.com/SargisYonan/uLAPack)
+[![Build Status](https://travis-ci.com/SargisYonan/uLAPack.svg?branch=master)](https://travis-ci.com/SargisYonan/uLAPack) [![DOI](https://zenodo.org/badge/164747669.svg)](https://zenodo.org/badge/latestdoi/164747669)
 
 
 ## Features
