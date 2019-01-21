@@ -209,36 +209,36 @@ An example using μLAPack for polynomial regression.
 #include "ulapack.h"
 
 int main(void) {
-	/*
-	 * Fit 10 data points.
-	 */
-	uint64_t data_points = 10;
+    /*
+     * Fit 10 data points.
+     */
+    uint64_t data_points = 10;
 
-	/*
-	 * Fit to the 2nd degree.
-	 */
-	uint64_t fit_degree = 2;
+    /*
+     * Fit to the 2nd degree.
+     */
+    uint64_t fit_degree = 2;
 
-	double xdata[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
-	/*
-	 * x^2 + noise
-	 */
-	double ydata[] = {0.679196, 3.215585, 
-					  8.635037, 16.117271, 
-					  25.174340, 35.784344, 
-					  48.847389, 64.033688, 
-					  81.458282, 101.281631};
+    double xdata[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+    /*
+     * x^2 + noise
+     */
+    double ydata[] = {0.679196, 3.215585, 
+                      8.635037, 16.117271, 
+                      25.174340, 35.784344, 
+                      48.847389, 64.033688, 
+                      81.458282, 101.281631};
 
-	/*
-	 * Declare vector objects for data points.
-	 */
-	Matrix_t x;
+    /*
+     * Declare vector objects for data points.
+     */
+    Matrix_t x;
     Matrix_t y;
 
     /*
      * Declare vector object for coefficients.
      */
-	Matrix_t p;
+    Matrix_t p;
 
     /*
      * Initialize vector objects.
@@ -287,7 +287,7 @@ The libc math.h library is required for a square root operation in the `ulapack_
 * write an element square root function to replace libc call
 * make a skew symmetric matrix - `ulapack_skew`
 * make a Kalman extension package `μKalman` with:
-	- model propagation
-	- Kalman gain matrix calculations using μLAPack
+    - model propagation
+    - Kalman gain matrix calculations using μLAPack
 
 Have a suggestion for a new feature/function? File an issue in this repository with your requests.
