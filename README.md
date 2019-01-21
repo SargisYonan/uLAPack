@@ -268,6 +268,8 @@ int main(void) {
 }
 ```
 
+![Polynomial Fit Comparison](examples/fitcomp.png)
+
 # Requirements
 The libc math.h library is required for a square root operation in the `ulapack_norm` function. To avoid the use of additional cmath library calls, the `math.h` `pow()` function was rewritten as a private function.
 
