@@ -17,17 +17,25 @@
 /*
  * Define the entry data type.
  */
+#ifndef ULAPACK_MATRIX_ENTRY_TYPE
 #define ULAPACK_MATRIX_ENTRY_TYPE double
+#endif
 
 /*
  * The data type for the row and column elements.
  * Unsigned type recommended.
  */
+#ifndef ULAPACK_INDEX_TYPE
+#include <stdint.h>
 #define ULAPACK_INDEX_TYPE uint64_t
+#endif
+
 /*
  * The signed equivalent data type for ULAPACK_INDEX_TYPE.
  */
+#ifndef ULAPACK_SIGNED_INDEX_TYPE
 #define ULAPACK_SIGNED_INDEX_TYPE int64_t
+#endif
 
 /*
  * Define ULAPACK_USE_PRINT to enable the ulapack_print function.
@@ -39,7 +47,9 @@
      * ULAPACK_MATRIX_ENTRY_TYPE is currently set to double, and so the delimiter is 
      * set to %lf including the '%' symbol.
      */
-    #define ULAPACK_PRINT_DELIMITER "%lf"
+    #ifndef ULAPACK_PRINT_DELIMITER
+    #define ULAPACK_PRINT_DELIMITER "%.4lf"
+    #endif
 
     #ifndef ULAPACK_PRINT_DELIMITER
         #error "ULAPACK_PRINT_DELIMITER must be defined when ULAPACK_USE_PRINT is enabled."
@@ -50,7 +60,9 @@
  * Small value for floating point tolerance considerations
  * for inversions and FP tolerance.
  */
+#ifndef MINIMUM_THRESHOLD_TOLERANCE
 #define MINIMUM_THRESHOLD_TOLERANCE (.00001)
+#endif
 
 /*
  * Defined if memory should be initialized to zeros.
@@ -84,21 +96,25 @@
     #endif
 #endif
 
-
 #ifdef ULAPACK_USE_DYNAMIC_ALLOC
     /*
      * Specify the memory allocator function to use which takes the form of stdlib's
      * malloc function : void *alloc(size_t bytes).
      */
-    #include <stdlib.h>
-    #define ULAPACK_ALLOC malloc
+    #ifndef ULAPACK_ALLOC
+        #include <stdlib.h>
+        #define ULAPACK_ALLOC malloc
+    #endif
 
     /*
      * Specify the memory freeing function to use which takes the form of stdlib's
      * free function : void free(void* ptr).
      */
-    #include <stdlib.h>
-    #define ULAPACK_FREE free
+    #ifndef ULAPACK_FREE
+        #include <stdlib.h>
+        #define ULAPACK_FREE free
+    #endif
+
 #endif
 
 #ifdef ULAPACK_USE_DYNAMIC_ALLOC

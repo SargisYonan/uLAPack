@@ -165,6 +165,38 @@ MatrixError_t ulapack_get_entry(const Matrix_t * const matrix,
                                 MatrixEntry_t * const value);
 
 /**
+ * @name ulapack_array_col_copy
+ * Copy data from an array into a column of a matrix.
+ *
+ * @param[in] data The array of data to copy into a matrix.
+ * @param[out] src The source matrix object to copy into.
+ * @param col The column of the source matrix object to copy into.
+ * @param data_points The number of entries to copy.
+ *
+ * @return ULAPack status code.
+ */
+ MatrixEntry_t ulapack_array_col_copy(const MatrixEntry_t **data, 
+                                  Matrix_t * const src,
+                                  const uint64_t col,
+                                  const uint64_t data_points);
+
+/**
+ * @name ulapack_array_row_copy
+ * Copy data from an array into a row of a matrix.
+ *
+ * @param[in] data The array of data to copy into a matrix.
+ * @param[out] src The source matrix object to copy into.
+ * @param row The row of the source matrix object to copy into.
+ * @param data_points The number of entries to copy.
+ *
+ * @return ULAPack status code.
+ */
+MatrixEntry_t ulapack_array_row_copy(const MatrixEntry_t ** const data, 
+                                 Matrix_t * const src,
+                                 const uint64_t row,
+                                 const uint64_t data_points);
+
+/**
  * @name ulapack_size
  * Get the dimensions of a matrix object.
  *

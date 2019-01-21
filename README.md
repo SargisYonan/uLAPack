@@ -24,6 +24,8 @@ All μLAPack functions are "safe" in that the matrix/vector operations are check
 * Safely modify a matrix/vector element - `ulapack_get_entry`
 * Query an object to see if it is a vector - `ulapack_is_vector`
 * Copy the contents of a matrix or vector - `ulapack_copy`
+* Copy data from an array to a matrix column - `ulapack_array_col_copy`
+* Copy data from an array to a matrix row - `ulapack_array_row_copy`
 
 #### Basic Matrix/Vector Operations
 * Get the size of a matrix or vector - `ulapack_size`
@@ -160,6 +162,111 @@ Output:
 [ 0 3 0 ]
 [ 0 0 3 ]
 ```
+# Examples
+Navigate to the `examples/` directory for code samples using μLAPack.
+
+An example of using μLAPack for Principle Component Analysis (PCA).
+```C
+#include "ulapack.h"
+
+int main(void) {
+
+    double Adata[10][8] = { {0.4170, 0.4192, 0.8007, 0.0983, 0.9889, 0.0194, 0.1023, 0.9034},
+                            {0.7203, 0.6852, 0.9683, 0.4211, 0.7482, 0.6788, 0.4141, 0.1375},
+                            {0.0001, 0.2045, 0.3134, 0.9579, 0.2804, 0.2116, 0.6944, 0.1393},
+                            {0.3023, 0.8781, 0.6923, 0.5332, 0.7893, 0.2655, 0.4142, 0.8074},
+                            {0.1468, 0.0274, 0.8764, 0.6919, 0.1032, 0.4916, 0.0500, 0.3977},
+                            {0.0923, 0.6705, 0.8946, 0.3155, 0.4479, 0.0534, 0.5359, 0.1654},
+                            {0.1863, 0.4173, 0.0850, 0.6865, 0.9086, 0.5741, 0.6638, 0.9275},
+                            {0.3456, 0.5587, 0.0391, 0.8346, 0.2936, 0.1467, 0.5149, 0.3478},
+                            {0.3968, 0.1404, 0.1698, 0.0183, 0.2878, 0.5893, 0.9446, 0.7508},
+                            {0.5388, 0.1981, 0.8781, 0.7501, 0.1300, 0.6998, 0.5866, 0.7260}};
+
+    Matrix_t A;
+    Matrix_t T;
+
+    ulapack_init(&A, 10, 8);
+    ulapack_init(&T, 10, 10);
+
+    /*
+     * Copy data points into vector objects.
+     */
+    for (uint64_t row_itor = 0; row_itor < 10; row_itor++) {
+        for (uint64_t col_itor = 0; col_itor < 8; col_itor++) {
+            ulapack_edit_entry(&A, 
+            row_itor, col_itor, 
+            Adata[row_itor][col_itor]);
+        }
+    }
+
+    ulapack_pca(&A, &T);
+}
+```
+
+An example using μLAPack for polynomial regression.
+
+```C
+#include "ulapack.h"
+
+int main(void) {
+	/*
+	 * Fit 10 data points.
+	 */
+	uint64_t data_points = 10;
+
+	/*
+	 * Fit to the 2nd degree.
+	 */
+	uint64_t fit_degree = 2;
+
+	double xdata[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+	/*
+	 * x^2 + noise
+	 */
+	double ydata[] = {0.679196, 3.215585, 
+					  8.635037, 16.117271, 
+					  25.174340, 35.784344, 
+					  48.847389, 64.033688, 
+					  81.458282, 101.281631};
+
+	/*
+	 * Declare vector objects for data points.
+	 */
+	Matrix_t x;
+    Matrix_t y;
+
+    /*
+     * Declare vector object for coefficients.
+     */
+	Matrix_t p;
+
+    /*
+     * Initialize vector objects.
+     */
+    ulapack_init(&x, data_points, 1);
+    ulapack_init(&y, data_points, 1);
+
+    ulapack_init(&p, fit_degree + 1, 1);
+
+    /*
+     * Copy data points into vector objects.
+     */
+    for (uint64_t row_itor = 0; row_itor < data_points; row_itor++) {
+        ulapack_edit_entry(&x, 
+            row_itor, 0, 
+            xdata[row_itor]);
+
+        ulapack_edit_entry(&y, 
+            row_itor, 0, 
+            ydata[row_itor]);
+    }
+
+    /*
+     * Run the regression.
+     */
+    ulapack_polyfit(&x, &y, fit_degree, &p);
+}
+```
 
 # Requirements
 The libc math.h library is required for a square root operation in the `ulapack_norm` function. To avoid the use of additional cmath library calls, the `math.h` `pow()` function was rewritten as a private function.
@@ -177,8 +284,6 @@ The libc math.h library is required for a square root operation in the `ulapack_
 * take the cross product of two vector - `ulapack_cross`
 * write an element square root function to replace libc call
 * make a skew symmetric matrix - `ulapack_skew`
-* copy array into vector - `ulapack_array_copy`
-* more code examples
 * make a Kalman extension package `μKalman` with:
 	- model propagation
 	- Kalman gain matrix calculations using μLAPack

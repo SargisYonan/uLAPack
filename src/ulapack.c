@@ -426,6 +426,70 @@ MatrixError_t ulapack_size(const Matrix_t * const matrix,
     return ulapack_success;
 }
 
+MatrixEntry_t ulapack_array_col_copy(const MatrixEntry_t **data, 
+                                 Matrix_t * const src,
+                                 const uint64_t col,
+                                 const uint64_t data_points) {
+    uint64_t row_itor = 0;
+
+    if (!*data) {
+        return ulapack_invalid_argument;
+    }
+
+    /*
+     * Verify that a valid operand object have been passed in.
+     */
+    if (!_ulapack_is_valid_memory(src)) {
+        return ulapack_uninit_obj;
+    }
+
+    if (src->n_cols <= col) {
+        return ulapack_invalid_argument;
+    }
+
+    if (src->n_rows <= data_points) {
+        return ulapack_invalid_argument;
+    }
+
+    for (row_itor = 0; row_itor < data_points; row_itor++) {
+        src->entry[row_itor][col] = (*data)[row_itor];
+    }
+
+    return ulapack_success;
+}
+
+MatrixEntry_t ulapack_array_row_copy(const MatrixEntry_t ** const data, 
+                                 Matrix_t * const src,
+                                 const uint64_t row,
+                                 const uint64_t data_points) {
+    uint64_t col_itor = 0;
+
+    if (!*data) {
+        return ulapack_invalid_argument;
+    }
+    
+    /*
+     * Verify that a valid operand object have been passed in.
+     */
+    if (!_ulapack_is_valid_memory(src)) {
+        return ulapack_uninit_obj;
+    }
+
+    if (src->n_rows <= row) {
+        return ulapack_invalid_argument;
+    }
+
+    if (src->n_cols <= data_points) {
+        return ulapack_invalid_argument;
+    }
+
+    for (col_itor = 0; col_itor < data_points; col_itor++) {
+        src->entry[row][col_itor] = *data[col_itor];
+    }
+
+    return ulapack_success;
+}
+
 MatrixError_t ulapack_set(Matrix_t * const matrix,
                           const MatrixEntry_t value) {
     /*
