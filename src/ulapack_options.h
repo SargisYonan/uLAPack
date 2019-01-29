@@ -67,12 +67,16 @@
 /*
  * Defined if memory should be initialized to zeros.
  */
-#define ULAPACK_INITIALIZE_MEMORY
+#ifndef ULAPACK_INITIALIZE_MEMORY
+// #define ULAPACK_INITIALIZE_MEMORY
+#endif
 
 /*
  * Option for using LU decomposition for matrix inversions.
  */
+#ifndef ULAPACK_INVERSE_VIA_LU
 #define ULAPACK_INVERSE_VIA_LU
+#endif
 
 /*
  * Keep defined for static memory allocation declarations.
