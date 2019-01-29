@@ -68,7 +68,7 @@
  * Defined if memory should be initialized to zeros.
  */
 #ifndef ULAPACK_INITIALIZE_MEMORY
-// #define ULAPACK_INITIALIZE_MEMORY
+#define ULAPACK_INITIALIZE_MEMORY
 #endif
 
 /*

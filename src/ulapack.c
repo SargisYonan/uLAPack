@@ -197,7 +197,11 @@ MatrixError_t ulapack_init(
          * Declare loop counters here in case C99 is not used.
          */
         Index_t row_itor = 0;
-        Index_t col_itor = 0;
+
+        #ifdef ULAPACK_INITIALIZE_MEMORY
+            Index_t col_itor = 0;
+        #endif
+
         Index_t free_rows_itor = 0;
 
         /*
