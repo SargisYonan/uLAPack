@@ -7,7 +7,7 @@ ulap_headers=$(ulap_src_dir)/ulapack.h $(ulap_src_dir)/ulapack_options.h
 
 all: pca polyfit
 
-pca : ulapack.o polyfit.c
+pca : ulapack.o pca.c
 	cc -I$(ulap_src_dir) $(cc_options) $(ulap_opt) ulapack.o pca.c -o pca
 
 polyfit : ulapack.o polyfit.c

@@ -22,15 +22,15 @@
  * @param nth_degree The number of degrees to fit a polynomial to.
  * @param[out] polynomial_coefs The returning polynomial fit coefficients.
  */
-static void run_regression(const double * xdata, 
-						   const double * ydata, 
-						   const uint64_t data_points, 
-						   const uint64_t nth_degree,
-						   Matrix_t * const polynomial_coefs) {
-	/*
-	 * Declare matrix objects.
-	 */
-	Matrix_t x;
+static void run_regression(const MatrixEntry_t * xdata, 
+                           const MatrixEntry_t * ydata, 
+                           const Index_t data_points, 
+                           const Index_t nth_degree,
+                           Matrix_t * const polynomial_coefs) {
+    /*
+     * Declare matrix objects.
+     */
+    Matrix_t x;
     Matrix_t y;
 
     /*
@@ -42,15 +42,8 @@ static void run_regression(const double * xdata,
     /*
      * Copy data points into vector objects.
      */
-    for (uint64_t row_itor = 0; row_itor < data_points; row_itor++) {
-        ulapack_edit_entry(&x, 
-            row_itor, 0, 
-            xdata[row_itor]);
-
-        ulapack_edit_entry(&y, 
-            row_itor, 0, 
-            ydata[row_itor]);
-    }
+    ulapack_array_col_copy(ydata, &y, 0, data_points);
+    ulapack_array_col_copy(xdata, &x, 0, data_points);
 
     /*
      * Run the regression.
@@ -60,25 +53,25 @@ static void run_regression(const double * xdata,
 
 int main(void) {
 
-	double xdata[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
-	/*
-	 * x^2 + noise
-	 */
-	double ydata[] = {0.679196, 3.215585, 
-					  8.635037, 16.117271, 
-					  25.174340, 35.784344, 
-					  48.847389, 64.033688, 
-					  81.458282, 101.281631};
+    MatrixEntry_t xdata[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+    /*
+     * x^2 + noise
+     */
+    MatrixEntry_t ydata[] = {0.679196, 3.215585, 
+                             8.635037, 16.117271, 
+                             25.174340, 35.784344, 
+                             48.847389, 64.033688, 
+                             81.458282, 101.281631};
 
-	const uint64_t degree = 2;
-	Matrix_t p;
+    const Index_t degree = 2;
+    Matrix_t p;
 
     ulapack_init(&p, degree + 1, 1);
 
-	run_regression(xdata, ydata, 10, 2, &p);
+    run_regression(xdata, ydata, 10, 2, &p);
 
-	printf("\nFit coefficients: \n");
-	ulapack_print(&p, stdout);
+    printf("\nFit coefficients: \n");
+    ulapack_print(&p, stdout);
 
 }
 

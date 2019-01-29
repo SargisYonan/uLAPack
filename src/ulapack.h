@@ -76,7 +76,7 @@ MatrixError_t ulapack_init(
     #else
         Matrix_t **matrix, 
     #endif
-    const uint64_t n_rows, const uint64_t n_cols);
+    const Index_t n_rows, const Index_t n_cols);
 
 /**
  * @name ulapack_destroy
@@ -137,7 +137,7 @@ MatrixError_t ulapack_print(const Matrix_t * const matrix,
  *         out of the range of the initialized matrix dimensions.
  */
 MatrixError_t ulapack_edit_entry(Matrix_t * const matrix, 
-                                 const uint64_t row, const uint64_t col,
+                                 const Index_t row, const Index_t col,
                                  const MatrixEntry_t value);
 
 /**
@@ -161,7 +161,7 @@ MatrixError_t ulapack_edit_entry(Matrix_t * const matrix,
  *         are out of the range of the initialized matrix dimensions.
  */
 MatrixError_t ulapack_get_entry(const Matrix_t * const matrix, 
-                                const uint64_t row, const uint64_t col,
+                                const Index_t row, const Index_t col,
                                 MatrixEntry_t * const value);
 
 /**
@@ -175,10 +175,10 @@ MatrixError_t ulapack_get_entry(const Matrix_t * const matrix,
  *
  * @return ULAPack status code.
  */
- MatrixEntry_t ulapack_array_col_copy(const MatrixEntry_t **data, 
-                                  Matrix_t * const src,
-                                  const uint64_t col,
-                                  const uint64_t data_points);
+ MatrixEntry_t ulapack_array_col_copy(const MatrixEntry_t * const data, 
+                                      Matrix_t * const dest_obj,
+                                      const Index_t col,
+                                      const Index_t data_points);
 
 /**
  * @name ulapack_array_row_copy
@@ -191,10 +191,10 @@ MatrixError_t ulapack_get_entry(const Matrix_t * const matrix,
  *
  * @return ULAPack status code.
  */
-MatrixEntry_t ulapack_array_row_copy(const MatrixEntry_t ** const data, 
-                                 Matrix_t * const src,
-                                 const uint64_t row,
-                                 const uint64_t data_points);
+MatrixEntry_t ulapack_array_row_copy(const MatrixEntry_t * const data, 
+                                     Matrix_t * const dest_obj,
+                                     const Index_t row,
+                                     const Index_t data_points);
 
 /**
  * @name ulapack_size
@@ -211,7 +211,7 @@ MatrixEntry_t ulapack_array_row_copy(const MatrixEntry_t ** const data,
  *         ulapack_invalid_argument is returned if rows or cols is NULL.
  */
 MatrixError_t ulapack_size(const Matrix_t * const matrix, 
-                           uint64_t * const rows, uint64_t * const cols);
+                           Index_t * const rows, Index_t * const cols);
 
 /**
  * @name ulapack_set
@@ -710,7 +710,7 @@ MatrixError_t ulapack_vandermonde(const Matrix_t * const x,
  *         initialized.
  */
 MatrixError_t ulapack_power(const Matrix_t * const matrix, 
-                            const uint64_t power,
+                            const Index_t power,
                             Matrix_t * const result);
 
 /**
@@ -741,7 +741,7 @@ MatrixError_t ulapack_power(const Matrix_t * const matrix,
  */
 MatrixError_t ulapack_polyfit(const Matrix_t * const x, 
                               const Matrix_t * const y,
-                              const uint64_t n,
+                              const Index_t n,
                               Matrix_t * const p);
 
 /* 

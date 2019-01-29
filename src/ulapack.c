@@ -59,7 +59,7 @@ static MatrixEntry_t ulapack_abs(const MatrixEntry_t element) {
  */
 static MatrixEntry_t _ulapack_elem_pow(const MatrixEntry_t elem, 
                                        const MatrixEntry_t p) {
-    uint64_t pitor = 0;
+    Index_t pitor = 0;
 
     MatrixEntry_t power = 0;
 
@@ -149,7 +149,7 @@ MatrixError_t ulapack_init(
     #else
         Matrix_t **matrix, 
     #endif
-    const uint64_t n_rows, const uint64_t n_cols) {
+    const Index_t n_rows, const Index_t n_cols) {
 
     /*
      * Case when using static memory allocation.
@@ -196,9 +196,9 @@ MatrixError_t ulapack_init(
         /*
          * Declare loop counters here in case C99 is not used.
          */
-        uint64_t row_itor = 0;
-        uint64_t col_itor = 0;
-        uint64_t free_rows_itor = 0;
+        Index_t row_itor = 0;
+        Index_t col_itor = 0;
+        Index_t free_rows_itor = 0;
 
         /*
          * Check to make sure the matrix object pointer given is not allocated.
@@ -284,7 +284,7 @@ MatrixError_t ulapack_init(
 
 #ifdef ULAPACK_USE_DYNAMIC_ALLOC
 MatrixError_t ulapack_destroy(Matrix_t *obj) {
-    uint64_t row_itor = 0;
+    Index_t row_itor = 0;
 
     if (obj) {
         if (obj->entry) {
@@ -322,8 +322,8 @@ MatrixError_t ulapack_destroy(Matrix_t *obj) {
 MatrixError_t ulapack_print(const Matrix_t * const matrix,
                             FILE *stream) {
 
-    uint64_t row_itor = 0;
-    uint64_t col_itor = 0;
+    Index_t row_itor = 0;
+    Index_t col_itor = 0;
 
     /*
      * Verify that a valid operand object have been passed in.
@@ -350,7 +350,7 @@ MatrixError_t ulapack_print(const Matrix_t * const matrix,
 #endif
 
 MatrixError_t ulapack_edit_entry(Matrix_t * const matrix, 
-                                 const uint64_t row, const uint64_t col,
+                                 const Index_t row, const Index_t col,
                                  const MatrixEntry_t value) {
     /*
      * Verify that a valid operand object have been passed in.
@@ -376,7 +376,7 @@ MatrixError_t ulapack_edit_entry(Matrix_t * const matrix,
 }
 
 MatrixError_t ulapack_get_entry(const Matrix_t * const matrix, 
-                                  const uint64_t row, const uint64_t col,
+                                  const Index_t row, const Index_t col,
                                   MatrixEntry_t * const value) {
     /*
      * Verify that a valid operand object have been passed in.
@@ -407,8 +407,72 @@ MatrixError_t ulapack_get_entry(const Matrix_t * const matrix,
     return ulapack_success;
 }
 
+MatrixEntry_t ulapack_array_col_copy(const MatrixEntry_t * const data, 
+                                 Matrix_t * const dest_obj,
+                                 const Index_t col,
+                                 const Index_t data_points) {
+    Index_t row_itor = 0;
+
+    if (!data) {
+        return ulapack_invalid_argument;
+    }
+
+    /*
+     * Verify that a valid operand object have been passed in.
+     */
+    if (!_ulapack_is_valid_memory(dest_obj)) {
+        return ulapack_uninit_obj;
+    }
+
+    if (dest_obj->n_cols <= col) {
+        return ulapack_invalid_argument;
+    }
+
+    if (dest_obj->n_rows < data_points) {
+        return ulapack_invalid_argument;
+    }
+
+    for (row_itor = 0; row_itor < data_points; row_itor++) {
+        dest_obj->entry[row_itor][col] = data[row_itor];
+    }
+
+    return ulapack_success;
+}
+
+MatrixEntry_t ulapack_array_row_copy(const MatrixEntry_t * const data, 
+                                 Matrix_t * const dest_obj,
+                                 const Index_t row,
+                                 const Index_t data_points) {
+    Index_t col_itor = 0;
+
+    if (!data) {
+        return ulapack_invalid_argument;
+    }
+    
+    /*
+     * Verify that a valid operand object have been passed in.
+     */
+    if (!_ulapack_is_valid_memory(dest_obj)) {
+        return ulapack_uninit_obj;
+    }
+
+    if (dest_obj->n_rows <= row) {
+        return ulapack_invalid_argument;
+    }
+
+    if (dest_obj->n_cols < data_points) {
+        return ulapack_invalid_argument;
+    }
+
+    for (col_itor = 0; col_itor < data_points; col_itor++) {
+        dest_obj->entry[row][col_itor] = data[col_itor];
+    }
+
+    return ulapack_success;
+}
+
 MatrixError_t ulapack_size(const Matrix_t * const matrix, 
-                           uint64_t * const rows, uint64_t * const cols) {
+                           Index_t * const rows, Index_t * const cols) {
     /*
      * Verify that a valid operand object have been passed in.
      */
@@ -426,78 +490,14 @@ MatrixError_t ulapack_size(const Matrix_t * const matrix,
     return ulapack_success;
 }
 
-MatrixEntry_t ulapack_array_col_copy(const MatrixEntry_t **data, 
-                                 Matrix_t * const src,
-                                 const uint64_t col,
-                                 const uint64_t data_points) {
-    uint64_t row_itor = 0;
-
-    if (!*data) {
-        return ulapack_invalid_argument;
-    }
-
-    /*
-     * Verify that a valid operand object have been passed in.
-     */
-    if (!_ulapack_is_valid_memory(src)) {
-        return ulapack_uninit_obj;
-    }
-
-    if (src->n_cols <= col) {
-        return ulapack_invalid_argument;
-    }
-
-    if (src->n_rows <= data_points) {
-        return ulapack_invalid_argument;
-    }
-
-    for (row_itor = 0; row_itor < data_points; row_itor++) {
-        src->entry[row_itor][col] = (*data)[row_itor];
-    }
-
-    return ulapack_success;
-}
-
-MatrixEntry_t ulapack_array_row_copy(const MatrixEntry_t ** const data, 
-                                 Matrix_t * const src,
-                                 const uint64_t row,
-                                 const uint64_t data_points) {
-    uint64_t col_itor = 0;
-
-    if (!*data) {
-        return ulapack_invalid_argument;
-    }
-    
-    /*
-     * Verify that a valid operand object have been passed in.
-     */
-    if (!_ulapack_is_valid_memory(src)) {
-        return ulapack_uninit_obj;
-    }
-
-    if (src->n_rows <= row) {
-        return ulapack_invalid_argument;
-    }
-
-    if (src->n_cols <= data_points) {
-        return ulapack_invalid_argument;
-    }
-
-    for (col_itor = 0; col_itor < data_points; col_itor++) {
-        src->entry[row][col_itor] = *data[col_itor];
-    }
-
-    return ulapack_success;
-}
-
 MatrixError_t ulapack_set(Matrix_t * const matrix,
                           const MatrixEntry_t value) {
     /*
      * Matrix iterators.
      * Declared at top of function for legacy compiler comparability.
      */
-    uint64_t row_itor = 0;
-    uint64_t col_itor = 0;
+    Index_t row_itor = 0;
+    Index_t col_itor = 0;
 
     /*
      * Verify that a valid operand object have been passed in.
@@ -525,8 +525,8 @@ MatrixError_t ulapack_is_equal(const Matrix_t * const A,
      * Matrix iterators.
      * Declared at top of function for legacy compiler comparability.
      */
-    uint64_t row_itor = 0;
-    uint64_t col_itor = 0;
+    Index_t row_itor = 0;
+    Index_t col_itor = 0;
 
     /*
      * Verify that valid operand objects have been passed in.
@@ -611,8 +611,8 @@ MatrixError_t ulapack_eye(Matrix_t * const matrix) {
      * Matrix iterators.
      * Declared at top of function for legacy compiler comparability.
      */
-    uint64_t row_itor = 0;
-    uint64_t col_itor = 0;
+    Index_t row_itor = 0;
+    Index_t col_itor = 0;
 
     /*
      * Verify that a valid operand object have been passed in.
@@ -652,8 +652,8 @@ MatrixError_t ulapack_sum(const Matrix_t * const matrix,
      * Matrix iterators.
      * Declared at top of function for legacy compiler comparability.
      */
-    uint64_t row_itor = 0;
-    uint64_t col_itor = 0;
+    Index_t row_itor = 0;
+    Index_t col_itor = 0;
 
     /*
      * Verify that a valid operand object have been passed in.
@@ -693,8 +693,8 @@ MatrixError_t ulapack_add(const Matrix_t * const A,
      * Matrix iterators.
      * Declared at top of function for legacy compiler comparability.
      */
-    uint64_t row_itor = 0;
-    uint64_t col_itor = 0;
+    Index_t row_itor = 0;
+    Index_t col_itor = 0;
 
     /*
      * Verify that valid operand objects have been passed in.
@@ -756,8 +756,8 @@ MatrixError_t ulapack_subtract(const Matrix_t * const A,
      * Matrix iterators.
      * Declared at top of function for legacy compiler comparability.
      */
-    uint64_t row_itor = 0;
-    uint64_t col_itor = 0;
+    Index_t row_itor = 0;
+    Index_t col_itor = 0;
 
     /*
      * Verify that valid operand objects have been passed in.
@@ -819,8 +819,8 @@ MatrixError_t ulapack_scale(Matrix_t * const matrix,
      * Matrix iterators.
      * Declared at top of function for legacy compiler comparability.
      */
-    uint64_t row_itor = 0;
-    uint64_t col_itor = 0;
+    Index_t row_itor = 0;
+    Index_t col_itor = 0;
 
     /*
      * Verify valid operand objects have been passed in.
@@ -874,8 +874,8 @@ MatrixError_t ulapack_norm(const Matrix_t * const matrix,
      * Matrix iterators.
      * Declared at top of function for legacy compiler comparability.
      */
-    uint64_t row_itor = 0;
-    uint64_t col_itor = 0;
+    Index_t row_itor = 0;
+    Index_t col_itor = 0;
 
     /*
      * Verify that valid operand objects have been passed in.
@@ -917,8 +917,8 @@ MatrixError_t ulapack_trace(const Matrix_t * const matrix,
      * Matrix iterators.
      * Declared at top of function for legacy compiler comparability.
      */
-    uint64_t row_itor = 0;
-    uint64_t col_itor = 0;
+    Index_t row_itor = 0;
+    Index_t col_itor = 0;
 
     /*
      * Verify that valid operand objects have been passed in.
@@ -958,7 +958,7 @@ MatrixError_t ulapack_dot(const Matrix_t * const vector_a,
      * Vector element iterator.
      * Declared at top of function for legacy compiler comparability.
      */
-    uint64_t elem_itor = 0;
+    Index_t elem_itor = 0;
 
     /*
      * is_vector return value.
@@ -1026,9 +1026,9 @@ MatrixError_t ulapack_product(const Matrix_t * const A,
      * Matrix iterators.
      * Declared at top of function for legacy compiler comparability.
      */
-    uint64_t row_itor = 0;
-    uint64_t col_itor = 0;
-    uint64_t swap_itor = 0;
+    Index_t row_itor = 0;
+    Index_t col_itor = 0;
+    Index_t swap_itor = 0;
 
     /*
      * Verify that valid operand objects have been passed in.
@@ -1091,8 +1091,8 @@ MatrixError_t ulapack_transpose(const Matrix_t * const matrix,
      * Matrix iterators.
      * Declared at top of function for legacy compiler comparability.
      */
-    uint64_t row_itor = 0;
-    uint64_t col_itor = 0;
+    Index_t row_itor = 0;
+    Index_t col_itor = 0;
 
     /*
      * Verify that a valid operand object have been passed in.
@@ -1146,7 +1146,7 @@ MatrixError_t ulapack_det(const Matrix_t * const matrix,
      * Matrix element iterator.
      * Declared at top of function for legacy compiler comparability.
      */
-    uint64_t elem_itor = 0;
+    Index_t elem_itor = 0;
 
     /*
      * Make a copy of the input matrix to put it into upper triangular form.
@@ -1305,11 +1305,11 @@ MatrixError_t ulapack_lu(const Matrix_t * const matrix,
      * Matrix iterators.
      * Declared at top of function for legacy compiler comparability.
      */
-    uint64_t row_itor = 0;
-    uint64_t col_itor = 0;
+    Index_t row_itor = 0;
+    Index_t col_itor = 0;
 
-    uint64_t sub_row = 0;
-    uint64_t sub_col = 0;
+    Index_t sub_row = 0;
+    Index_t sub_col = 0;
 
     /*
      * A copy of the input matrix.
@@ -1442,11 +1442,11 @@ MatrixError_t ulapack_lu(const Matrix_t * const matrix,
  */
 #ifndef ULAPACK_INVERSE_VIA_LU
 static void _ulapack_swap_rows(Matrix_t * const matrix, 
-                               const uint64_t row_a, 
-                               const uint64_t row_b) {
+                               const Index_t row_a, 
+                               const Index_t row_b) {
     MatrixEntry_t swap_element = 0;
 
-    uint64_t elem_itor = 0;
+    Index_t elem_itor = 0;
 
     for (elem_itor = 0; elem_itor < matrix->n_rows; elem_itor++) {
         swap_element = matrix->entry[row_a][elem_itor];
@@ -1467,9 +1467,9 @@ static void _ulapack_swap_rows(Matrix_t * const matrix,
  */
 static void _ulapack_backsub(Matrix_t * const matrix_a, 
                              Matrix_t * const matrix_b) {
-    uint64_t row_itor = 0;
-    uint64_t col_itor = 0;
-    uint64_t sub_itor = 0;
+    Index_t row_itor = 0;
+    Index_t col_itor = 0;
+    Index_t sub_itor = 0;
 
     MatrixEntry_t pivot = 0;
     MatrixEntry_t ratio = 0;
@@ -1516,9 +1516,9 @@ static void _ulapack_backsub(Matrix_t * const matrix_a,
 #ifdef ULAPACK_INVERSE_VIA_LU
 static void _ulapack_forwardsub(Matrix_t * const matrix_a, 
                                 Matrix_t * const matrix_b) {
-    uint64_t row_itor = 0;
-    uint64_t col_itor = 0;
-    uint64_t sub_itor = 0;
+    Index_t row_itor = 0;
+    Index_t col_itor = 0;
+    Index_t sub_itor = 0;
 
     MatrixEntry_t pivot = 0;
     MatrixEntry_t ratio = 0;
@@ -1549,10 +1549,10 @@ MatrixError_t ulapack_inverse(const Matrix_t * const matrix,
      * Declared at top of function for legacy compiler comparability.
      */
     #ifndef ULAPACK_INVERSE_VIA_LU
-        uint64_t row_itor = 0;
-        uint64_t col_itor = 0;
+        Index_t row_itor = 0;
+        Index_t col_itor = 0;
 
-        uint64_t pivot_index = 0;
+        Index_t pivot_index = 0;
 
         MatrixEntry_t pivot_element = 0;
         MatrixEntry_t ratio = 0;
@@ -2012,8 +2012,8 @@ MatrixError_t ulapack_least_squares(const Matrix_t * const A,
 MatrixError_t ulapack_vandermonde(const Matrix_t * const x,
                                   const Index_t order, 
                                   Matrix_t * const V) {
-    uint64_t col_itor = 0;
-    uint64_t v_itor = 0;
+    Index_t col_itor = 0;
+    Index_t v_itor = 0;
 
     /*
      * Verify that a valid operand object have been passed in.
@@ -2060,14 +2060,14 @@ MatrixError_t ulapack_vandermonde(const Matrix_t * const x,
 }
 
 MatrixError_t ulapack_power(const Matrix_t * const matrix, 
-                            const uint64_t power,
+                            const Index_t power,
                             Matrix_t * const result) {
     /*
      * Matrix iterators.
      * Declared at top of function for legacy compiler comparability.
      */
-    uint64_t row_itor = 0;
-    uint64_t col_itor = 0;
+    Index_t row_itor = 0;
+    Index_t col_itor = 0;
 
     /*
      * Verify that a valid operand object have been passed in.
@@ -2107,7 +2107,7 @@ MatrixError_t ulapack_power(const Matrix_t * const matrix,
 
 MatrixError_t ulapack_polyfit(const Matrix_t * const x, 
                               const Matrix_t * const y,
-                              const uint64_t n,
+                              const Index_t n,
                               Matrix_t * const p) {
     MatrixError_t ret_code;
 
@@ -2202,8 +2202,8 @@ MatrixError_t ulapack_copy(const Matrix_t * const matrix,
      * Matrix iterators.
      * Declared at top of function for legacy compiler comparability.
      */
-    uint64_t row_itor = 0;
-    uint64_t col_itor = 0;
+    Index_t row_itor = 0;
+    Index_t col_itor = 0;
 
     /*
      * Verify that a valid operand object have been passed in.

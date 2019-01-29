@@ -162,7 +162,7 @@ Output:
 [ 0 3 0 ]
 [ 0 0 3 ]
 ```
-# Examples
+## Examples
 Navigate to the `examples/` directory for code samples using μLAPack.
 
 An example of using μLAPack for Principle Component Analysis (PCA).
@@ -171,16 +171,16 @@ An example of using μLAPack for Principle Component Analysis (PCA).
 
 int main(void) {
 
-    double Adata[10][8] = { {0.4170, 0.4192, 0.8007, 0.0983, 0.9889, 0.0194, 0.1023, 0.9034},
-                            {0.7203, 0.6852, 0.9683, 0.4211, 0.7482, 0.6788, 0.4141, 0.1375},
-                            {0.0001, 0.2045, 0.3134, 0.9579, 0.2804, 0.2116, 0.6944, 0.1393},
-                            {0.3023, 0.8781, 0.6923, 0.5332, 0.7893, 0.2655, 0.4142, 0.8074},
-                            {0.1468, 0.0274, 0.8764, 0.6919, 0.1032, 0.4916, 0.0500, 0.3977},
-                            {0.0923, 0.6705, 0.8946, 0.3155, 0.4479, 0.0534, 0.5359, 0.1654},
-                            {0.1863, 0.4173, 0.0850, 0.6865, 0.9086, 0.5741, 0.6638, 0.9275},
-                            {0.3456, 0.5587, 0.0391, 0.8346, 0.2936, 0.1467, 0.5149, 0.3478},
-                            {0.3968, 0.1404, 0.1698, 0.0183, 0.2878, 0.5893, 0.9446, 0.7508},
-                            {0.5388, 0.1981, 0.8781, 0.7501, 0.1300, 0.6998, 0.5866, 0.7260}};
+    const double Adata[10][8] = {{0.4170, 0.4192, 0.8007, 0.0983, 0.9889, 0.0194, 0.1023, 0.9034},
+                                {0.7203, 0.6852, 0.9683, 0.4211, 0.7482, 0.6788, 0.4141, 0.1375},
+                                {0.0001, 0.2045, 0.3134, 0.9579, 0.2804, 0.2116, 0.6944, 0.1393},
+                                {0.3023, 0.8781, 0.6923, 0.5332, 0.7893, 0.2655, 0.4142, 0.8074},
+                                {0.1468, 0.0274, 0.8764, 0.6919, 0.1032, 0.4916, 0.0500, 0.3977},
+                                {0.0923, 0.6705, 0.8946, 0.3155, 0.4479, 0.0534, 0.5359, 0.1654},
+                                {0.1863, 0.4173, 0.0850, 0.6865, 0.9086, 0.5741, 0.6638, 0.9275},
+                                {0.3456, 0.5587, 0.0391, 0.8346, 0.2936, 0.1467, 0.5149, 0.3478},
+                                {0.3968, 0.1404, 0.1698, 0.0183, 0.2878, 0.5893, 0.9446, 0.7508},
+                                {0.5388, 0.1981, 0.8781, 0.7501, 0.1300, 0.6998, 0.5866, 0.7260}};
 
     Matrix_t A;
     Matrix_t T;
@@ -212,22 +212,22 @@ int main(void) {
     /*
      * Fit 10 data points.
      */
-    uint64_t data_points = 10;
+    const uint64_t data_points = 10;
 
     /*
      * Fit to the 2nd degree.
      */
-    uint64_t fit_degree = 2;
+    const uint64_t fit_degree = 2;
 
-    double xdata[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+    const double xdata[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
     /*
      * x^2 + noise
      */
-    double ydata[] = {0.679196, 3.215585, 
-                      8.635037, 16.117271, 
-                      25.174340, 35.784344, 
-                      48.847389, 64.033688, 
-                      81.458282, 101.281631};
+    const double ydata[] = {0.679196, 3.215585, 
+                            8.635037, 16.117271, 
+                            25.174340, 35.784344, 
+                            48.847389, 64.033688, 
+                            81.458282, 101.281631};
 
     /*
      * Declare vector objects for data points.
@@ -271,20 +271,20 @@ int main(void) {
 ![Polynomial Fit Comparison](examples/fitcomp.png)
 
 # Requirements
-The libc math.h library is required for a square root operation in the `ulapack_norm` function. To avoid the use of additional cmath library calls, the `math.h` `pow()` function was rewritten as a private function.
+The libc math.h library is required for a square root operation in the `ulapack_norm` and `ulapack_svd` functions. To avoid the use of additional cmath library calls, the `math.h` `pow()` function was rewritten as a private function.
 
 # Licensing & Support
 μLAPack and any derivative works of μLAPack (and embedded_lapack) are free to use for personal and/or educational use without profit and for development purposes in your project(s) to verify if μLAPack is right for you. Contact Sargis Yonan at sargis@yonan.org with the subject line `uLAPack Licensing` to further discuss developer licensing for your project/product, and redistribution. Refer to the [LICENSE](LICENSE) document for licensing details.
 
 # Legacy
-μLAPack is a fork of my now deprecated [embedded_lapack](https://www.github.com/SargisYonan/embedded_lapack) library. μLAPack includes definitions for both static and dynamic memory allocation, safer type definitions, more explicit and safer error code status, Doxygen, more functionality, and more compiler support when compared to embedded_lapack.
+μLAPack is a fork of my now deprecated embedded_lapack library. μLAPack includes definitions for both static and dynamic memory allocation, safer type definitions, more explicit and safer error code status, Doxygen, more functionality, and more compiler support when compared to embedded_lapack.
 
 # TODO
 * find occurrences and indices of a value in a matrix/vector - `ulapack_find`
 * take the pseudo inverse of a matrix via SVD (good for poorly conditioned matrix inversions)
 * grab a sub-matrix from a matrix/vector (similar to the `:` operator in MATLAB) - `ulapack_copy_submatrix`
 * take the cross product of two vector - `ulapack_cross`
-* write an element square root function to replace libc call
+* write an element square root function to avoid any math libc calls
 * make a skew symmetric matrix - `ulapack_skew`
 * make a Kalman extension package `μKalman` with:
     - model propagation
