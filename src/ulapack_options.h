@@ -60,8 +60,8 @@
  * Small value for floating point tolerance considerations
  * for inversions and FP tolerance.
  */
-#ifndef ULAPACK_MINIMUM_THRESHOLD_TOLERANCE
-#define ULAPACK_MINIMUM_THRESHOLD_TOLERANCE (.00001)
+#ifndef MINIMUM_THRESHOLD_TOLERANCE
+#define MINIMUM_THRESHOLD_TOLERANCE (.0001)
 #endif
 
 /*

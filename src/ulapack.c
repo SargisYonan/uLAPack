@@ -565,7 +565,7 @@ MatrixError_t ulapack_is_equal(const Matrix_t * const A,
              */
             if (ulapack_abs(A->entry[row_itor][col_itor] - 
                             B->entry[row_itor][col_itor]) >
-                ULAPACK_MINIMUM_THRESHOLD_TOLERANCE) {
+                MINIMUM_THRESHOLD_TOLERANCE) {
                 *is_equal = ulapack_error;
                 return ulapack_success;
             }
@@ -1664,14 +1664,14 @@ MatrixError_t ulapack_inverse(const Matrix_t * const matrix,
         for (row_itor = 0; row_itor < matrix_copy->n_rows; row_itor++) {
             
             pivot_index = row_itor;
-            while (pivot_element < ULAPACK_MINIMUM_THRESHOLD_TOLERANCE && 
+            while (pivot_element < MINIMUM_THRESHOLD_TOLERANCE && 
                 pivot_index < matrix_copy->n_rows) {
 
                 pivot_element = matrix_copy->entry[pivot_index][row_itor];
                 pivot_index++;
             }
 
-            if (pivot_element < ULAPACK_MINIMUM_THRESHOLD_TOLERANCE) {
+            if (pivot_element < MINIMUM_THRESHOLD_TOLERANCE) {
                 /*
                  * The matrix is singular.
                  */
